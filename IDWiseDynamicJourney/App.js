@@ -6,130 +6,282 @@
  * @flow strict-local
  */
 
-import React, { useEffect } from 'react';
-import type {Node} from 'react';
-import {Platform} from 'react-native';
-import { NativeEventEmitter, NativeModules, Button, View, Text, Image } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
 import {
+  NativeEventEmitter,
+  NativeModules,
+  View,
+  Text,
   SafeAreaView,
-  StyleSheet,
-  useColorScheme,
+  Image,
+  Dimensions,
+  Pressable,
 } from 'react-native';
+import {StyleSheet} from 'react-native';
+import {Button} from 'react-native-paper';
 
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {AsyncStorageKeys} from './constants';
+import uuid from 'react-native-uuid';
+import AppModal from './AppModal';
+import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
+import {faImage} from '@fortawesome/free-solid-svg-icons';
 
-
-const App: () => Node = () => {
-
+const App = () => {
   const isDarkMode = false;
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+    flex: 1,
+    backgroundColor: '#FFFFFF',
   };
-  
-   
-    const { IDWiseModule } = NativeModules;
 
-      useEffect(() => {
+  const [documentImage, setDocumentImage] = useState(null);
+  const [selfieImage, setSelfieImage] = useState(null);
 
-      const eventEmitter = new NativeEventEmitter(IDWiseModule);
-   
-       eventEmitter.addListener('onError', (event) => {
-         console.log(`An Error has occured  ${event.errorCode} : ${event.errorMessage}`); 
-       });
-   
-       eventEmitter.addListener('journeyStarted', (event) => {
-           console.log(`Journey Started with id ${event.journeyId}`); 
-       });
-   
-       eventEmitter.addListener('journeyCompleted', (event) => {
-         console.log(`Journey Completed with id ${event.journeyId}`);
-       });
-   
-       eventEmitter.addListener('journeyCancelled', (event) => {
-         console.log(`Journey Cancelled with id ${event.journeyId}`); 
-       });
-   
-   
-     }) 
-  
+  const [modalTitle, setModalTitle] = useState(null);
+  const [modalImage, setModalImage] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
 
-  const onPress =  () => {
+  const {IDWiseModule} = NativeModules;
 
-    //you can pre-load this on componentDidMount() if you want to
-    
-    const theme = "SYSTEM_DEFAULT"; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
-    IDWiseModule.initializeSDK("<YOUR_CLIENT_KEY>", theme);
-    
-    IDWiseModule.startJourney("<JOURNEY_DEFINITION_ID>","<REFERENCE_NO>","<LOCALE>");
-    
+  useEffect(() => {
+    const eventEmitter = new NativeEventEmitter(IDWiseModule);
+
+    eventEmitter.addListener('onError', event => {
+      console.log(
+        `An Error has occured  ${event.errorCode} : ${event.errorMessage}`,
+      );
+    });
+
+    eventEmitter.addListener('journeyStarted', event => {
+      console.log(`Journey Started with id ${event.journeyId}`);
+
+      //Save Reference No using AsyncStorage
+      AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, event.journeyId);
+    });
+
+    eventEmitter.addListener('journeyCompleted', event => {
+      console.log(`Journey Completed with id ${event.journeyId}`);
+    });
+
+    eventEmitter.addListener('journeyCancelled', event => {
+      console.log(`Journey Cancelled with id ${event.journeyId}`);
+    });
+
+    eventEmitter.addListener('stepCaptured', event => {
+      console.log(`Step Captured with id ${event.stepId}`);
+      console.log(`Step Captured Bitmap Base64 ${event.bitmapBase64}`);
+      if (event.stepId === '0') {
+        setDocumentImage(`data:image/png;base64,${event.bitmapBase64}`);
+      } else {
+        setSelfieImage(`data:image/png;base64,${event.bitmapBase64}`);
+      }
+    });
+
+    eventEmitter.addListener('stepResult', event => {
+      console.log(`Step Result with id ${event.stepId}`);
+      console.log(`Step Result data ${event.stepResult}`);
+    });
+  });
+
+  const resetJourney = () => {
+    AsyncStorage.clear();
+    // IDWiseModule.unloadSDK();
+    startResumeJourney();
+  };
+
+  useEffect(() => {
+    startResumeJourney();
+  }, []);
+
+  const startResumeJourney = () => {
+    const clientKey = '<YOUR_CLIENT_KEY>';
+    const theme = 'SYSTEM_DEFAULT'; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
+
+    const journeyDefinitionId = '<JOURNEY_DEFINITION_ID>';
+    var referenceNo = null; //<REFERENCE_NO>
+    const locale = '<LOCALE>';
+
+    IDWiseModule.initializeSDK(clientKey, theme);
+
+    AsyncStorage.getItem(AsyncStorageKeys.JOURNEY_ID).then(journeyId => {
+      if (journeyId == null) {
+        referenceNo = 'idwise_test_' + uuid.v4();
+        console.log('Starting Journey');
+        console.log(referenceNo, 'REFERENCE_NO');
+        AsyncStorage.setItem(AsyncStorageKeys.REFERENCE_NO, referenceNo);
+        IDWiseModule.startDynamicJourney(
+          journeyDefinitionId,
+          referenceNo,
+          locale,
+        );
+      } else {
+        AsyncStorage.getItem(AsyncStorageKeys.REFERENCE_NO).then(refNo => {
+          console.log('Resuming Journey');
+          referenceNo = refNo;
+          console.log(referenceNo, 'REFERENCE_NO');
+          IDWiseModule.resumeDynamicJourney(
+            journeyDefinitionId,
+            referenceNo,
+            locale,
+          );
+        });
+      }
+    });
+  };
+
+  const navigateStep = stepId => {
+    console.log(stepId, 'STEP_ID');
+    IDWiseModule.startStep(stepId);
+  };
+
+  const showImageModal = (title, image) => {
+    setModalTitle(title);
+    setModalImage(image);
+    setModalVisible(true);
   };
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <View style={styles.loginButtonSection}>
-
-        
-
-      <Text style={styles.heading}>
-          IDWise: Trust but Verify
-        </Text>
-
+      <View style={{flex: 1, justifyContent: 'center'}}>
+        <Text style={styles.body}>Welcome to</Text>
+        <Text style={styles.heading}>Verification Journey</Text>
         <Text style={styles.body}>
-          IDWise sample app for React-Native
+          Please take some time to verify your identity
         </Text>
 
-        <Button
-          title="Click to start Verification!"
-          style={styles.loginButton}
-          color="#841584"
-          onPress= {
-            () => {
-            onPress()
-            }
-            }
-        />
-      
+        <View style={{flex: 1, justifyContent: 'center'}}>
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Button
+              mode="contained"
+              buttonColor="#2A4CD0"
+              style={styles.stepButtonStyle}
+              contentStyle={styles.stepContentStyle}
+              labelStyle={{
+                fontSize: 18,
+              }}
+              onPress={() => navigateStep('0')}>
+              ID Document
+            </Button>
+            {documentImage && (
+              <Pressable
+                style={{
+                  position: 'absolute',
+                  left: Dimensions.get('window').width * 0.8,
+                  marginRight: 40,
+                }}
+                onPress={() => {
+                  showImageModal('ID Document', documentImage);
+                }}>
+                <FontAwesomeIcon color="#2A4CD0" icon={faImage} size={32} />
+              </Pressable>
+            )}
+          </View>
+
+          <View
+            style={{
+              flexDirection: 'row',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            <Button
+              mode="contained"
+              buttonColor="#2A4CD0"
+              style={[styles.stepButtonStyle, {marginTop: 10}]}
+              contentStyle={styles.stepContentStyle}
+              labelStyle={{
+                fontSize: 18,
+              }}
+              onPress={() => navigateStep('2')}>
+              Selfie
+            </Button>
+            {selfieImage && (
+              <Pressable
+                style={{
+                  position: 'absolute',
+                  left: Dimensions.get('window').width * 0.8,
+                  marginRight: 40,
+                }}
+                onPress={() => {
+                  showImageModal('Selfie', selfieImage);
+                }}>
+                <FontAwesomeIcon color="#2A4CD0" icon={faImage} size={32} />
+              </Pressable>
+            )}
+          </View>
+        </View>
       </View>
+
+      <Button
+        buttonColor="#FFFFF"
+        style={styles.journeyButtonStyle}
+        contentStyle={styles.journeyContentStyle}
+        labelStyle={styles.journeyLabelStyle}
+        onPress={() => resetJourney()}>
+        Test Your Journey
+      </Button>
+
+      <AppModal
+        modalVisible={modalVisible}
+        heading={modalTitle}
+        imageSrc={modalImage}
+        buttonCallback={() => setModalVisible(false)}
+      />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  heading:{
-    color:'#000',
-    marginBottom:40,
-    fontSize:30,
-    fontWeight:'bold'
+  heading: {
+    color: '#000',
+    marginTop: 20,
+    fontSize: 30,
+    alignSelf: 'center',
+    fontWeight: 'bold',
   },
-  body:{
-    color:'#000',
-    marginBottom:40,
-    fontSize:12
+  body: {
+    color: '#000',
+    marginTop: 20,
+    fontSize: 14,
+    alignSelf: 'center',
   },
-  loginButtonSection: {
-    width: '100%',
-    height: '100%',
+  stepButtonStyle: {
+    borderRadius: 10,
+    alignSelf: 'center',
+    width: '50%',
     justifyContent: 'center',
-    alignItems: 'center'
- },
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  stepContentStyle: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    justifyContent: 'center',
   },
-  sectionDescription: {
-    marginTop: 8,
+  stepLabelStyle: {
     fontSize: 18,
-    fontWeight: '400',
   },
-  highlight: {
-    fontWeight: '700',
+  journeyButtonStyle: {
+    borderRadius: 10,
+    alignSelf: 'center',
+    marginBottom: 20,
+    width: '90%',
+    borderWidth: 1,
+    borderColor: '#2A4CD0',
+  },
+  journeyContentStyle: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    justifyContent: 'center',
+  },
+  journeyLabelStyle: {
+    fontSize: 18,
+    color: '#2A4CD0',
   },
 });
 

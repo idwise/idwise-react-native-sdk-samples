@@ -1,5 +1,8 @@
 package com.idwisereactnativesample;
 
+import android.graphics.Bitmap;
+import android.util.Base64;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
@@ -9,11 +12,17 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import com.google.gson.Gson;
 import com.idwise.sdk.IDWise;
 import com.idwise.sdk.IDWiseSDKCallback;
+import com.idwise.sdk.IDWiseSDKStepCallback;
 import com.idwise.sdk.data.models.IDWiseSDKError;
 import com.idwise.sdk.data.models.IDWiseSDKTheme;
 import com.idwise.sdk.data.models.JourneyInfo;
+import com.idwise.sdk.data.models.StepResult;
+
+import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -21,6 +30,8 @@ import kotlin.jvm.functions.Function1;
 public class IDWiseModule extends ReactContextBaseJavaModule {
 
     ReactApplicationContext context;
+    IDWiseSDKCallback journeyCallback;
+    IDWiseSDKStepCallback stepCallback;
 
     IDWiseModule(ReactApplicationContext context) {
         super(context);
@@ -67,12 +78,62 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void startJourney(String journeyTemplateId,
-                             String referenceNo,
-                             String locale) {
+    public void startDynamicJourney(String journeyTemplateId,
+                                    String referenceNo,
+                                    String locale) {
+        setJourneyCallback();
+        setStepCallback();
+
+        IDWise.INSTANCE.startDynamicJourney(
+                getCurrentActivity(),
+                journeyTemplateId,
+                referenceNo,
+                locale,
+                journeyCallback,
+                stepCallback
+        );
+    }
+
+    @ReactMethod
+    public void resumeDynamicJourney(String journeyTemplateId,
+                                     String referenceNo,
+                                     String locale) {
+        setJourneyCallback();
+        setStepCallback();
+
+        IDWise.INSTANCE.resumeDynamicJourney(
+                getCurrentActivity(),
+                journeyTemplateId,
+                referenceNo,
+                locale,
+                journeyCallback,
+                stepCallback
+        );
+    }
+
+    @ReactMethod
+    public void startStep(String stepId) {
+        IDWise.INSTANCE.startStep(getCurrentActivity(), stepId);
+    }
+
+    @ReactMethod
+    public void unloadSDK() {
+        IDWise.INSTANCE.unloadSDK();
+    }
 
 
-        IDWiseSDKCallback callback = new IDWiseSDKCallback() {
+    @ReactMethod
+    public void addListener(String eventName) {
+
+    }
+
+    @ReactMethod
+    public void removeListeners(Integer count) {
+
+    }
+
+    private void setJourneyCallback() {
+        journeyCallback = new IDWiseSDKCallback() {
             @Override
             public void onJourneyStarted(@NonNull JourneyInfo journeyInfo) {
                 WritableMap params = Arguments.createMap();
@@ -109,15 +170,38 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
 
             }
         };
-
-        IDWise.INSTANCE.startJourney(
-                getCurrentActivity(),
-                journeyTemplateId,
-                referenceNo,
-                locale,
-                callback
-        );
     }
 
+    private void setStepCallback() {
+        stepCallback = new IDWiseSDKStepCallback() {
+            @Override
+            public void onStepCaptured(@NonNull String s, @Nullable Bitmap bitmap, @Nullable Bitmap bitmap1) {
+                WritableMap params = Arguments.createMap();
+                params.putString("stepId", s);
 
+                if (bitmap1 != null) {
+                    ByteArrayOutputStream outputStreamCropped = new ByteArrayOutputStream();
+                    bitmap1.compress(Bitmap.CompressFormat.PNG, 100, outputStreamCropped);
+                    params.putString("bitmapBase64", Base64.encodeToString(outputStreamCropped.toByteArray(), Base64.DEFAULT));
+                }
+
+                sendEvent("stepCaptured", params);
+            }
+
+            @Override
+            public void onStepResult(@NonNull String s, @Nullable StepResult stepResult) {
+                WritableMap params = Arguments.createMap();
+                params.putString("stepId", s);
+                params.putString("stepResult", new Gson().toJson(stepResult));
+                sendEvent("stepResult", params);
+            }
+
+            @Override
+            public void onStepConfirmed(@NonNull String s) {
+                /**
+                 * No need to implement this as for latest version it's not being required.
+                 */
+            }
+        };
+    }
 }
