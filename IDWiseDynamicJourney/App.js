@@ -112,23 +112,21 @@ const App = () => {
         referenceNo = 'idwise_test_' + uuid.v4();
         console.log('Starting Journey');
         console.log(referenceNo, 'REFERENCE_NO');
-        AsyncStorage.setItem(AsyncStorageKeys.REFERENCE_NO, referenceNo);
         IDWiseModule.startDynamicJourney(
           journeyDefinitionId,
           referenceNo,
           locale,
         );
       } else {
-        AsyncStorage.getItem(AsyncStorageKeys.REFERENCE_NO).then(refNo => {
-          console.log('Resuming Journey');
-          referenceNo = refNo;
-          console.log(referenceNo, 'REFERENCE_NO');
-          IDWiseModule.resumeDynamicJourney(
-            journeyDefinitionId,
-            referenceNo,
-            locale,
-          );
-        });
+        console.log('Resuming Journey');
+        referenceNo = journeyId;
+        console.log(journeyId, 'REFERENCE_NO');
+
+        IDWiseModule.resumeDynamicJourney(
+          journeyDefinitionId,
+          referenceNo,
+          locale,
+        );
       }
     });
   };
