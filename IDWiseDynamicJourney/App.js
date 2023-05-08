@@ -24,9 +24,10 @@ import {Button} from 'react-native-paper';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {AsyncStorageKeys} from './constants';
 import uuid from 'react-native-uuid';
-import AppModal from './AppModal';
+
 import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
 import {faImage} from '@fortawesome/free-solid-svg-icons';
+import AppModal from './AppModal';
 
 const App = () => {
   const isDarkMode = false;
@@ -75,7 +76,7 @@ const App = () => {
       console.log(`Step Captured Bitmap Base64 ${event.bitmapBase64}`);
       if (event.stepId === '0') {
         setDocumentImage(`data:image/png;base64,${event.bitmapBase64}`);
-      } else {
+      } else if (event.stepId === '2') {
         setSelfieImage(`data:image/png;base64,${event.bitmapBase64}`);
       }
     });
