@@ -11,7 +11,9 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
+import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.gson.Gson;
 import com.idwise.sdk.IDWise;
@@ -23,7 +25,6 @@ import com.idwise.sdk.data.models.JourneyInfo;
 import com.idwise.sdk.data.models.StepResult;
 
 import java.io.ByteArrayOutputStream;
-import java.util.UUID;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
@@ -178,16 +179,22 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
     private void setStepCallback() {
         stepCallback = new IDWiseSDKStepCallback() {
             @Override
-            public void onStepCaptured(@NonNull String s, @Nullable Bitmap bitmap, @Nullable Bitmap bitmap1) {
+            public void onStepCaptured(@NonNull String s, @Nullable Bitmap bitmap, @Nullable Bitmap croppedBitmap) {
                 WritableMap params = Arguments.createMap();
                 params.putString("stepId", s);
 
-                if (bitmap1 != null) {
-                    ByteArrayOutputStream outputStreamCropped = new ByteArrayOutputStream();
-                    bitmap1.compress(Bitmap.CompressFormat.PNG, 100, outputStreamCropped);
-                    params.putString("bitmapBase64", Base64.encodeToString(outputStreamCropped.toByteArray(), Base64.DEFAULT));
-                }
+                if (croppedBitmap != null) {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
 
+//                    params.putString("bitmapBase64", Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
+                    WritableArray array = new WritableNativeArray();
+                    byte[] bytes = stream.toByteArray();
+                    for (byte b : bytes) {
+                        array.pushInt(b);
+                    }
+                    params.putArray("bitmapBase64Bytes", array);
+                }
                 sendEvent("stepCaptured", params);
             }
 
