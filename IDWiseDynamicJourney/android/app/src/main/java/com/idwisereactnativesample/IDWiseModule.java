@@ -144,7 +144,9 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onJourneyResumed(@NonNull JourneyInfo journeyInfo) {
-
+                WritableMap params = Arguments.createMap();
+                params.putString("journeyId", journeyInfo.getJourneyId());
+                sendEvent("journeyResumed", params);
             }
 
             @Override
