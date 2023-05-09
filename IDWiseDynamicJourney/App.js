@@ -89,7 +89,7 @@ const App = () => {
 
   const resetJourney = () => {
     AsyncStorage.clear();
-    // IDWiseModule.unloadSDK();
+    IDWiseModule.unloadSDK();
     startResumeJourney();
   };
 
@@ -98,12 +98,13 @@ const App = () => {
   }, []);
 
   const startResumeJourney = () => {
-    const clientKey = '<YOUR_CLIENT_KEY>';
+    const clientKey =
+      'QmFzaWMgT1dJNU5HRXhPVFV0WWpRek1pMDBPVFl3TFdFd1lqQXRPR0UwWW1Sa1lUQTJOVEkzT21ZMWIxWk1WM0J0Tm1SYWMxVjBWRGxuV1VKcGVVaFhVVVJoYUUxMVQwVkxialZZZVROaU5EZz0=';
     const theme = 'SYSTEM_DEFAULT'; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const journeyDefinitionId = '<JOURNEY_DEFINITION_ID>';
-    var referenceNo = null; //<REFERENCE_NO>
-    const locale = '<LOCALE>';
+    const journeyDefinitionId = '9b94a195-b432-4960-a0b0-8a4bdda06527';
+    var referenceNo = null;
+    const locale = 'en';
 
     IDWiseModule.initializeSDK(clientKey, theme);
 
@@ -223,8 +224,8 @@ const App = () => {
         style={styles.journeyButtonStyle}
         contentStyle={styles.journeyContentStyle}
         labelStyle={styles.journeyLabelStyle}
-        onPress={() => resetJourney()}>
-        Test Your Journey
+        onPress={resetJourney}>
+        Test New Journey
       </Button>
 
       <AppModal
