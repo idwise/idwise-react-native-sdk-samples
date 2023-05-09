@@ -23,7 +23,7 @@ const AppModal = ({modalVisible, heading, imageSrc, buttonCallback}) => {
             contentStyle={styles.buttonContentStyle}
             labelStyle={styles.buttonLabelStyle}
             onPress={buttonCallback}>
-            OK
+            Close
           </Button>
         </View>
       </View>
@@ -54,9 +54,9 @@ const styles = StyleSheet.create({
   heading: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#2A4CD0',
+    color: '#000',
     textAlign: 'center',
-    paddingBottom: 20,
+    paddingBottom: 15,
   },
   imageStyle: {
     width: '100%',
@@ -74,10 +74,10 @@ const styles = StyleSheet.create({
   },
   buttonContentStyle: {
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 2,
     justifyContent: 'center',
   },
   buttonLabelStyle: {
-    fontSize: 18,
+    fontSize: 16,
   },
 });
