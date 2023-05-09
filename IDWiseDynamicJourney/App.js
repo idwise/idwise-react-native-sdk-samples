@@ -32,6 +32,9 @@ import AppModal from './AppModal';
 const App = () => {
   const isDarkMode = false;
 
+  const STEP_ID_DOCUMENT = '0';
+  const STEP_SELFIE = '2';
+
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     flex: 1,
@@ -44,6 +47,7 @@ const App = () => {
   const [modalTitle, setModalTitle] = useState(null);
   const [modalImage, setModalImage] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [stepButtonEnable, setStepButtonEnable] = useState(false);
 
   const {IDWiseModule} = NativeModules;
 
@@ -58,9 +62,14 @@ const App = () => {
 
     eventEmitter.addListener('journeyStarted', event => {
       console.log(`Journey Started with id ${event.journeyId}`);
-
+      setStepButtonEnable(true);
       //Save Reference No using AsyncStorage
       AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, event.journeyId);
+    });
+
+    eventEmitter.addListener('journeyResumed', event => {
+      console.log(`Journey Resumed with id ${event.journeyId}`);
+      setStepButtonEnable(true);
     });
 
     eventEmitter.addListener('journeyCompleted', event => {
@@ -74,9 +83,9 @@ const App = () => {
     eventEmitter.addListener('stepCaptured', event => {
       console.log(`Step Captured with id ${event.stepId}`);
       console.log(`Step Captured Bitmap Base64 ${event.bitmapBase64}`);
-      if (event.stepId === '0') {
+      if (event.stepId === STEP_ID_DOCUMENT) {
         setDocumentImage(`data:image/png;base64,${event.bitmapBase64}`);
-      } else if (event.stepId === '2') {
+      } else if (event.stepId === STEP_SELFIE) {
         setSelfieImage(`data:image/png;base64,${event.bitmapBase64}`);
       }
     });
@@ -89,7 +98,7 @@ const App = () => {
 
   const resetJourney = () => {
     AsyncStorage.clear();
-    // IDWiseModule.unloadSDK();
+    IDWiseModule.unloadSDK();
     startResumeJourney();
   };
 
@@ -166,7 +175,8 @@ const App = () => {
               labelStyle={{
                 fontSize: 18,
               }}
-              onPress={() => navigateStep('0')}>
+              disabled={!stepButtonEnable}
+              onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
               ID Document
             </Button>
             {documentImage && (
@@ -198,7 +208,8 @@ const App = () => {
               labelStyle={{
                 fontSize: 18,
               }}
-              onPress={() => navigateStep('2')}>
+              disabled={!stepButtonEnable}
+              onPress={() => navigateStep(STEP_SELFIE)}>
               Selfie
             </Button>
             {selfieImage && (
@@ -223,8 +234,8 @@ const App = () => {
         style={styles.journeyButtonStyle}
         contentStyle={styles.journeyContentStyle}
         labelStyle={styles.journeyLabelStyle}
-        onPress={() => resetJourney()}>
-        Test Your Journey
+        onPress={resetJourney}>
+        Test New Journey
       </Button>
 
       <AppModal

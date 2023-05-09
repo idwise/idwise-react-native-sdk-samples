@@ -10,6 +10,7 @@ import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.bridge.UiThreadUtil;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.gson.Gson;
@@ -118,7 +119,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void unloadSDK() {
-        IDWise.INSTANCE.unloadSDK();
+        UiThreadUtil.runOnUiThread(IDWise.INSTANCE::unloadSDK);
     }
 
 
@@ -143,7 +144,9 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
 
             @Override
             public void onJourneyResumed(@NonNull JourneyInfo journeyInfo) {
-
+                WritableMap params = Arguments.createMap();
+                params.putString("journeyId", journeyInfo.getJourneyId());
+                sendEvent("journeyResumed", params);
             }
 
             @Override
