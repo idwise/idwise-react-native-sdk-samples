@@ -1,7 +1,7 @@
 package com.idwisereactnativesample;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
-import android.util.Base64;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -11,9 +11,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.UiThreadUtil;
-import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
-import com.facebook.react.bridge.WritableNativeArray;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 import com.google.gson.Gson;
 import com.idwise.sdk.IDWise;
@@ -22,18 +20,19 @@ import com.idwise.sdk.IDWiseSDKStepCallback;
 import com.idwise.sdk.data.models.IDWiseSDKError;
 import com.idwise.sdk.data.models.IDWiseSDKTheme;
 import com.idwise.sdk.data.models.JourneyInfo;
+import com.idwise.sdk.data.models.JourneySummary;
 import com.idwise.sdk.data.models.StepResult;
-
-import java.io.ByteArrayOutputStream;
 
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
+import kotlin.jvm.functions.Function2;
 
 public class IDWiseModule extends ReactContextBaseJavaModule {
 
     ReactApplicationContext context;
     IDWiseSDKCallback journeyCallback;
     IDWiseSDKStepCallback stepCallback;
+
 
     IDWiseModule(ReactApplicationContext context) {
         super(context);
@@ -119,6 +118,39 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
+    public void startStepFromFileUpload(String stepId, byte[] data) {
+        IDWise.INSTANCE.startStepFromFileUpload(getCurrentActivity(), stepId, data);
+    }
+
+    @ReactMethod
+    public void getJourneySummary(String journeyId) {
+        Function2<? super JourneySummary, ? super IDWiseSDKError, Unit> summaryCallback = (Function2<JourneySummary, IDWiseSDKError, Unit>) (summary, error) -> {
+
+            WritableMap params = Arguments.createMap();
+
+            if (summary != null) {
+                Gson gson = new Gson();
+                params.putString("journeyId", summary.getJourneyId());
+                params.putString("journeyStepSummaries", gson.toJson(summary.getStepSummaries()));
+                params.putString("journeyDefinition", gson.toJson(summary.getJourneyDefinition()));
+                params.putString("journeyResult", gson.toJson(summary.getJourneyResult()));
+                params.putBoolean("journeyIsComplete", summary.isCompleted());
+                sendEvent("journeySummary", params);
+            }
+
+            if (error != null) {
+                params.putInt("errorCode", error.getErrorCode());
+                params.putString("errorMessage", error.getMessage());
+                sendEvent("onError", params);
+            }
+
+            return null;
+        };
+
+        IDWise.INSTANCE.getJourneySummary(journeyId, summaryCallback);
+    }
+
+    @ReactMethod
     public void unloadSDK() {
         UiThreadUtil.runOnUiThread(IDWise.INSTANCE::unloadSDK);
     }
@@ -178,23 +210,11 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
 
     private void setStepCallback() {
         stepCallback = new IDWiseSDKStepCallback() {
+            @SuppressLint("CheckResult")
             @Override
             public void onStepCaptured(@NonNull String s, @Nullable Bitmap bitmap, @Nullable Bitmap croppedBitmap) {
                 WritableMap params = Arguments.createMap();
                 params.putString("stepId", s);
-
-                if (croppedBitmap != null) {
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    croppedBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-
-//                    params.putString("bitmapBase64", Base64.encodeToString(stream.toByteArray(), Base64.DEFAULT));
-                    WritableArray array = new WritableNativeArray();
-                    byte[] bytes = stream.toByteArray();
-                    for (byte b : bytes) {
-                        array.pushInt(b);
-                    }
-                    params.putArray("bitmapBase64Bytes", array);
-                }
                 sendEvent("stepCaptured", params);
             }
 
