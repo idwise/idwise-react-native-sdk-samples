@@ -45,7 +45,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initializeSDK(String clientKey, String theme) {
+    public void initialize(String clientKey, String theme) {
         IDWiseSDKTheme idwiseTheme;
         try {
             idwiseTheme = IDWiseSDKTheme.valueOf(theme);
@@ -77,7 +77,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
             public void onJourneyStarted(@NonNull JourneyInfo journeyInfo) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo.getJourneyId());
-                sendEvent("journeyStarted", params);
+                sendEvent("onJourneyStarted", params);
             }
 
             @Override
@@ -89,14 +89,14 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
             public void onJourneyCompleted(@NonNull JourneyInfo journeyInfo, boolean isCompleted) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo.getJourneyId());
-                sendEvent("journeyCompleted", params);
+                sendEvent("onJourneyFinished", params);
             }
 
             @Override
             public void onJourneyCancelled(@Nullable JourneyInfo journeyInfo) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo == null ? null : journeyInfo.getJourneyId());
-                sendEvent("journeyCancelled", params);
+                sendEvent("onJourneyCancelled", params);
             }
 
             @Override

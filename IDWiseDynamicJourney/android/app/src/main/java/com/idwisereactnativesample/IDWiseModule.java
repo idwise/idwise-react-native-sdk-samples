@@ -57,7 +57,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void initializeSDK(String clientKey, String theme) {
+    public void initialize(String clientKey, String theme) {
         IDWiseSDKTheme idwiseTheme;
         try {
             idwiseTheme = IDWiseSDKTheme.valueOf(theme);
@@ -135,7 +135,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
                 params.putString("journeyDefinition", gson.toJson(summary.getJourneyDefinition()));
                 params.putString("journeyResult", gson.toJson(summary.getJourneyResult()));
                 params.putBoolean("journeyIsComplete", summary.isCompleted());
-                sendEvent("journeySummary", params);
+                sendEvent("onJourneySummary", params);
             }
 
             if (error != null) {
@@ -172,28 +172,28 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
             public void onJourneyStarted(@NonNull JourneyInfo journeyInfo) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo.getJourneyId());
-                sendEvent("journeyStarted", params);
+                sendEvent("onJourneyStarted", params);
             }
 
             @Override
             public void onJourneyResumed(@NonNull JourneyInfo journeyInfo) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo.getJourneyId());
-                sendEvent("journeyResumed", params);
+                sendEvent("onJourneyResumed", params);
             }
 
             @Override
             public void onJourneyCompleted(@NonNull JourneyInfo journeyInfo, boolean isCompleted) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo.getJourneyId());
-                sendEvent("journeyCompleted", params);
+                sendEvent("onJourneyFinished", params);
             }
 
             @Override
             public void onJourneyCancelled(@Nullable JourneyInfo journeyInfo) {
                 WritableMap params = Arguments.createMap();
                 params.putString("journeyId", journeyInfo == null ? null : journeyInfo.getJourneyId());
-                sendEvent("journeyCancelled", params);
+                sendEvent("onJourneyCancelled", params);
             }
 
             @Override
@@ -215,7 +215,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
             public void onStepCaptured(@NonNull String s, @Nullable Bitmap bitmap, @Nullable Bitmap croppedBitmap) {
                 WritableMap params = Arguments.createMap();
                 params.putString("stepId", s);
-                sendEvent("stepCaptured", params);
+                sendEvent("onStepCaptured", params);
             }
 
             @Override
@@ -223,7 +223,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
                 WritableMap params = Arguments.createMap();
                 params.putString("stepId", s);
                 params.putString("stepResult", new Gson().toJson(stepResult));
-                sendEvent("stepResult", params);
+                sendEvent("onStepResult", params);
             }
 
             @Override

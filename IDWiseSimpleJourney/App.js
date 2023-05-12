@@ -40,15 +40,15 @@ const App: () => Node = () => {
          console.log(`An Error has occured  ${event.errorCode} : ${event.errorMessage}`); 
        });
    
-       eventEmitter.addListener('journeyStarted', (event) => {
+       eventEmitter.addListener('onJourneyStarted', (event) => {
            console.log(`Journey Started with id ${event.journeyId}`); 
        });
    
-       eventEmitter.addListener('journeyCompleted', (event) => {
+       eventEmitter.addListener('onJourneyFinished', (event) => {
          console.log(`Journey Completed with id ${event.journeyId}`);
        });
    
-       eventEmitter.addListener('journeyCancelled', (event) => {
+       eventEmitter.addListener('onJourneyCancelled', (event) => {
          console.log(`Journey Cancelled with id ${event.journeyId}`); 
        });
    
@@ -61,7 +61,7 @@ const App: () => Node = () => {
     //you can pre-load this on componentDidMount() if you want to
     
     const theme = "SYSTEM_DEFAULT"; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
-    IDWiseModule.initializeSDK("<YOUR_CLIENT_KEY>", theme);
+    IDWiseModule.initialize("<YOUR_CLIENT_KEY>", theme);
     
     IDWiseModule.startJourney("<JOURNEY_DEFINITION_ID>","<REFERENCE_NO>","<LOCALE>");
     

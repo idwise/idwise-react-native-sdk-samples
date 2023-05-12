@@ -49,7 +49,7 @@ const App = () => {
       );
     });
 
-    eventEmitter.addListener('journeyStarted', event => {
+    eventEmitter.addListener('onJourneyStarted', event => {
       console.log(`Journey Started with id ${event.journeyId}`);
       setStepButtonEnable(true);
       //Save Reference No using AsyncStorage
@@ -59,34 +59,33 @@ const App = () => {
       IDWiseModule.getJourneySummary(event.journeyId);
     });
 
-    eventEmitter.addListener('journeyResumed', event => {
+    eventEmitter.addListener('onJourneyResumed', event => {
       setJourneyId(event.journeyId);
       console.log(`Journey Resumed with id ${event.journeyId}`);
       setStepButtonEnable(true);
       IDWiseModule.getJourneySummary(event.journeyId);
     });
 
-    eventEmitter.addListener('journeyCompleted', event => {
+    eventEmitter.addListener('onJourneyFinished', event => {
       console.log(`Journey Completed with id ${event.journeyId}`);
     });
 
-    eventEmitter.addListener('journeyCancelled', event => {
+    eventEmitter.addListener('onJourneyCancelled', event => {
       console.log(`Journey Cancelled with id ${event.journeyId}`);
     });
 
-    eventEmitter.addListener('journeySummary', event => {
+    eventEmitter.addListener('onJourneySummary', event => {
       console.log(`Journey Summary for id ${event.journeyId}`);
       console.log(`Journey Step Summaries ${event.journeyStepSummaries}`);
-      console.log(`Journey Definition ${event.journeyDefinition}`);
       console.log(`Journey Result ${event.journeyResult}`);
       console.log(`Journey Is Complete ${event.journeyIsComplete}`);
     });
 
-    eventEmitter.addListener('stepCaptured', event => {
+    eventEmitter.addListener('onStepCaptured', event => {
       console.log(`Step Captured with id ${event.stepId}`);
     });
 
-    eventEmitter.addListener('stepResult', event => {
+    eventEmitter.addListener('onStepResult', event => {
       console.log(`Step Result with id ${event.stepId} : ${event.stepResult}`);
     });    
   });
@@ -111,7 +110,7 @@ const App = () => {
     var referenceNo = null; //<REFERENCE_NO>
     const locale = '<LOCALE>';
 
-    IDWiseModule.initializeSDK(clientKey, theme);
+    IDWiseModule.initialize(clientKey, theme);
 
     AsyncStorage.getItem(AsyncStorageKeys.JOURNEY_ID).then(journeyId => {
       if (journeyId == null) {
