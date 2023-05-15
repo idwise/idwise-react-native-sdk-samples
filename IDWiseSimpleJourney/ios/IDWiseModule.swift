@@ -33,7 +33,7 @@ class IDWiseModule: RCTEventEmitter  {
     }
     IDWise.initialize(clientKey: clientKey,theme: sdkTheme) { err in
           if let error = err {
-            print(error.message)
+            IDWiseModule.emitter.sendEvent(withName: "onError", body: ["errorCode": error.code, "message": error.message] as [String : Any])
           }
         }
     
