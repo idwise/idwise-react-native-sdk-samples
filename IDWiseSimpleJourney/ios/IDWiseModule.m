@@ -11,7 +11,8 @@
 
 @interface RCT_EXTERN_MODULE(IDWiseModule,RCTEventEmitter)
 
-RCT_EXTERN_METHOD(initializeSDK:(NSString *)clientKey) 
+RCT_EXTERN_METHOD(initialize:(NSString *)clientKey
+                  :(NSString *)theme) 
 RCT_EXTERN_METHOD(startJourney:(NSString *)journeyDefinitionID
                   :(NSString *)referenceNo
                   :(NSString *)locale)
