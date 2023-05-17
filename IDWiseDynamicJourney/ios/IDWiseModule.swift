@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import IDWiseLight
+import IDWise
 import React
 
 @objc (IDWiseModule)
