@@ -17,18 +17,23 @@ class IDWiseModule: RCTEventEmitter  {
   public static var emitter: RCTEventEmitter!
   
   open override func supportedEvents() -> [String] {
-     ["journeyStarted", "journeyCancelled" ,"onError", "journeyCompleted"]
+     ["onJourneyStarted", "onJourneyCancelled" ,"onError", "onJourneyFinished"]
    }
   
   override init() {
     super.init()
     IDWiseModule.emitter = self
   }
-  @objc func initializeSDK(_ clientKey: String) {
-    
-    IDWise.initialize(clientKey: clientKey) { err in
+  @objc func initialize(_ clientKey: String,_ theme: String) {
+    var sdkTheme: IDWiseSDKTheme = .systemDefault
+    if theme == "LIGHT" {
+      sdkTheme = .light
+    } else if theme == "DARK" {
+      sdkTheme = .dark
+    }
+    IDWise.initialize(clientKey: clientKey,theme: sdkTheme) { err in
           if let error = err {
-            print(error.message)
+            IDWiseModule.emitter.sendEvent(withName: "onError", body: ["errorCode": error.code, "message": error.message] as [String : Any])
           }
         }
     
@@ -48,17 +53,13 @@ class IDWiseModule: RCTEventEmitter  {
     }
   }
   
-  // Delegate Methods bridging
-  @objc func journeyStarted(_ callback: RCTResponseSenderBlock) {
-    
-  }
   
 }
 
 extension IDWiseModule: IDWiseSDKJourneyDelegate {
   @objc func JourneyStarted(journeyID: String) {
     self.journeyID = journeyID
-    IDWiseModule.emitter.sendEvent(withName: "journeyStarted", body: ["journeyId": journeyID])
+    IDWiseModule.emitter.sendEvent(withName: "onJourneyStarted", body: ["journeyId": journeyID])
     print("Journey started with journey Id : \(journeyID)")
   }
   
@@ -67,18 +68,18 @@ extension IDWiseModule: IDWiseSDKJourneyDelegate {
   }
   
   func JourneyFinished() {
-    IDWiseModule.emitter.sendEvent(withName: "journeyCompleted", body: ["journeyId": self.journeyID])
+    IDWiseModule.emitter.sendEvent(withName: "onJourneyFinished", body: ["journeyId": self.journeyID])
     print("Journey Finished")
   }
   
   func JourneyCancelled() {
     print("Journey Cancelled")
-    IDWiseModule.emitter.sendEvent(withName: "journeyCancelled", body: ["journeyId": self.journeyID])
+    IDWiseModule.emitter.sendEvent(withName: "onJourneyCancelled", body: ["journeyId": self.journeyID])
 
   }
   
   func onError(error: IDWiseSDKError) {
-    IDWiseModule.emitter.sendEvent(withName: "onError", body: ["errorCode": error.code, "errorMessage": error.message])
+    IDWiseModule.emitter.sendEvent(withName: "onError", body: ["errorCode": error.code, "message": error.message] as [String : Any])
   }
   
   
