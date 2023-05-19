@@ -26,5 +26,6 @@ RCT_EXTERN_METHOD(startStep:(NSString *)stepId
 RCT_EXTERN_METHOD(startStepFromFileUpload:(NSString *)stepId
                   :(NSData *)data
                  )
+RCT_EXTERN_METHOD(unloadSDK)
 RCT_EXTERN_METHOD(supportedEvents)
 @end
