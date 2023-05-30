@@ -7,8 +7,8 @@
  */
 
 import React, { useEffect } from 'react';
-import type {Node} from 'react';
-import {Platform} from 'react-native';
+import type { Node } from 'react';
+import { Platform } from 'react-native';
 import { NativeEventEmitter, NativeModules, Button, View, Text, Image } from 'react-native';
 import {
   SafeAreaView,
@@ -28,52 +28,52 @@ const App: () => Node = () => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
-  
-   
-    const { IDWiseModule } = NativeModules;
 
-      useEffect(() => {
 
-      const eventEmitter = new NativeEventEmitter(IDWiseModule);
-   
-       eventEmitter.addListener('onError', (event) => {
-         console.log(`An Error has occured  ${event.errorCode} : ${event.errorMessage}`); 
-       });
-   
-       eventEmitter.addListener('journeyStarted', (event) => {
-           console.log(`Journey Started with id ${event.journeyId}`); 
-       });
-   
-       eventEmitter.addListener('journeyCompleted', (event) => {
-         console.log(`Journey Completed with id ${event.journeyId}`);
-       });
-   
-       eventEmitter.addListener('journeyCancelled', (event) => {
-         console.log(`Journey Cancelled with id ${event.journeyId}`); 
-       });
-   
-   
-     }) 
-  
+  const { IDWiseModule } = NativeModules;
 
-  const onPress =  () => {
+  useEffect(() => {
+
+    const eventEmitter = new NativeEventEmitter(IDWiseModule);
+
+    eventEmitter.addListener('onError', (event) => {
+      console.log(`An Error has occured  ${event.errorCode} : ${event.message}`);
+    });
+
+    eventEmitter.addListener('onJourneyStarted', (event) => {
+      console.log(`Journey Started with id ${event.journeyId}`);
+    });
+
+    eventEmitter.addListener('onJourneyFinished', (event) => {
+      console.log(`Journey Completed with id ${event.journeyId}`);
+    });
+
+    eventEmitter.addListener('onJourneyCancelled', (event) => {
+      console.log(`Journey Cancelled with id ${event.journeyId}`);
+    });
+
+
+  })
+
+
+  const onPress = () => {
 
     //you can pre-load this on componentDidMount() if you want to
-    
+
     const theme = "SYSTEM_DEFAULT"; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
-    IDWiseModule.initializeSDK("<YOUR_CLIENT_KEY>", theme);
-    
-    IDWiseModule.startJourney("<JOURNEY_DEFINITION_ID>","<REFERENCE_NO>","<LOCALE>");
-    
+    IDWiseModule.initialize("<YOUR_CLIENT_KEY>", theme);
+
+    IDWiseModule.startJourney("<JOURNEY_DEFINITION_ID>", "<REFERENCE_NO>", "<LOCALE>");
+
   };
 
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={styles.loginButtonSection}>
 
-        
 
-      <Text style={styles.heading}>
+
+        <Text style={styles.heading}>
           IDWise: Trust but Verify
         </Text>
 
@@ -85,36 +85,36 @@ const App: () => Node = () => {
           title="Click to start Verification!"
           style={styles.loginButton}
           color="#841584"
-          onPress= {
+          onPress={
             () => {
-            onPress()
+              onPress()
             }
-            }
+          }
         />
-      
+
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  heading:{
-    color:'#000',
-    marginBottom:40,
-    fontSize:30,
-    fontWeight:'bold'
+  heading: {
+    color: '#000',
+    marginBottom: 40,
+    fontSize: 30,
+    fontWeight: 'bold'
   },
-  body:{
-    color:'#000',
-    marginBottom:40,
-    fontSize:12
+  body: {
+    color: '#000',
+    marginBottom: 40,
+    fontSize: 12
   },
   loginButtonSection: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center'
- },
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,

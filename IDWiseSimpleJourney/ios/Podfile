@@ -15,7 +15,7 @@ enable_user_defined_build_types!
 target 'idwiseReactNativeSample' do
   config = use_native_modules!
 
-  pod 'IDWise', '3.11.5', :build_type => :dynamic_framework
+  pod 'IDWise', '4.1.0', :build_type => :dynamic_framework
 
   use_react_native!(
     :path => config[:reactNativePath],

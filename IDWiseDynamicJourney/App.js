@@ -14,9 +14,7 @@ import {
   View,
   Text,
   SafeAreaView,
-  Image,
   Dimensions,
-  Pressable,
 } from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Button} from 'react-native-paper';
@@ -24,10 +22,6 @@ import {Button} from 'react-native-paper';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {AsyncStorageKeys} from './constants';
 import uuid from 'react-native-uuid';
-
-import {FontAwesomeIcon} from '@fortawesome/react-native-fontawesome';
-import {faImage} from '@fortawesome/free-solid-svg-icons';
-import AppModal from './AppModal';
 
 const App = () => {
   const isDarkMode = false;
@@ -41,12 +35,7 @@ const App = () => {
     backgroundColor: '#FFFFFF',
   };
 
-  const [documentImage, setDocumentImage] = useState(null);
-  const [selfieImage, setSelfieImage] = useState(null);
-
-  const [modalTitle, setModalTitle] = useState(null);
-  const [modalImage, setModalImage] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [journeyId, setJourneyId] = useState(null);
   const [stepButtonEnable, setStepButtonEnable] = useState(false);
 
   const {IDWiseModule} = NativeModules;
@@ -60,44 +49,51 @@ const App = () => {
       );
     });
 
-    eventEmitter.addListener('journeyStarted', event => {
+    eventEmitter.addListener('onJourneyStarted', event => {
       console.log(`Journey Started with id ${event.journeyId}`);
       setStepButtonEnable(true);
       //Save Reference No using AsyncStorage
+      setJourneyId(event.journeyId);
       AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, event.journeyId);
+
+      IDWiseModule.getJourneySummary(event.journeyId);
     });
 
-    eventEmitter.addListener('journeyResumed', event => {
+    eventEmitter.addListener('onJourneyResumed', event => {
+      setJourneyId(event.journeyId);
       console.log(`Journey Resumed with id ${event.journeyId}`);
       setStepButtonEnable(true);
+      IDWiseModule.getJourneySummary(event.journeyId);
     });
 
-    eventEmitter.addListener('journeyCompleted', event => {
+    eventEmitter.addListener('onJourneyFinished', event => {
       console.log(`Journey Completed with id ${event.journeyId}`);
     });
 
-    eventEmitter.addListener('journeyCancelled', event => {
+    eventEmitter.addListener('onJourneyCancelled', event => {
       console.log(`Journey Cancelled with id ${event.journeyId}`);
     });
 
-    eventEmitter.addListener('stepCaptured', event => {
-      console.log(`Step Captured with id ${event.stepId}`);
-      console.log(`Step Captured Bitmap Base64 ${event.bitmapBase64}`);
-      if (event.stepId === STEP_ID_DOCUMENT) {
-        setDocumentImage(`data:image/png;base64,${event.bitmapBase64}`);
-      } else if (event.stepId === STEP_SELFIE) {
-        setSelfieImage(`data:image/png;base64,${event.bitmapBase64}`);
-      }
+    eventEmitter.addListener('onJourneySummary', event => {
+      console.log(`Journey Summary for id ${event.journeyId}`);
+      console.log(`Journey Step Summaries ${event.journeyStepSummaries}`);
+      console.log(`Journey Result ${event.journeyResult}`);
+      console.log(`Journey Is Complete ${event.journeyIsComplete}`);
     });
 
-    eventEmitter.addListener('stepResult', event => {
-      console.log(`Step Result with id ${event.stepId}`);
-      console.log(`Step Result data ${event.stepResult}`);
+    eventEmitter.addListener('onStepCaptured', event => {
+      console.log(`Step Captured with id ${event.stepId}`);
     });
+
+    eventEmitter.addListener('onStepResult', event => {
+      console.log(`Step Result with id ${event.stepId} : ${event.stepResult}`);
+    });    
   });
 
   const resetJourney = () => {
     AsyncStorage.clear();
+    setJourneyId(null);
+    setStepButtonEnable(false);
     IDWiseModule.unloadSDK();
     startResumeJourney();
   };
@@ -115,26 +111,20 @@ const App = () => {
     var referenceNo = null;
     const locale = 'en';
 
-    IDWiseModule.initializeSDK(clientKey, theme);
+    IDWiseModule.initialize(clientKey, theme);
 
     AsyncStorage.getItem(AsyncStorageKeys.JOURNEY_ID).then(journeyId => {
       if (journeyId == null) {
         referenceNo = 'idwise_test_' + uuid.v4();
-        console.log('Starting Journey');
-        console.log(referenceNo, 'REFERENCE_NO');
         IDWiseModule.startDynamicJourney(
           journeyDefinitionId,
           referenceNo,
           locale,
         );
       } else {
-        console.log('Resuming Journey');
-        referenceNo = journeyId;
-        console.log(journeyId, 'REFERENCE_NO');
-
         IDWiseModule.resumeDynamicJourney(
           journeyDefinitionId,
-          referenceNo,
+          journeyId,
           locale,
         );
       }
@@ -144,12 +134,6 @@ const App = () => {
   const navigateStep = stepId => {
     console.log(stepId, 'STEP_ID');
     IDWiseModule.startStep(stepId);
-  };
-
-  const showImageModal = (title, image) => {
-    setModalTitle(title);
-    setModalImage(image);
-    setModalVisible(true);
   };
 
   return (
@@ -180,19 +164,7 @@ const App = () => {
               onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
               ID Document
             </Button>
-            {documentImage && (
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  left: Dimensions.get('window').width * 0.8,
-                  marginRight: 40,
-                }}
-                onPress={() => {
-                  showImageModal('ID Document', documentImage);
-                }}>
-                <FontAwesomeIcon color="#2A4CD0" icon={faImage} size={32} />
-              </Pressable>
-            )}
+           
           </View>
 
           <View
@@ -213,22 +185,26 @@ const App = () => {
               onPress={() => navigateStep(STEP_SELFIE)}>
               Selfie
             </Button>
-            {selfieImage && (
-              <Pressable
-                style={{
-                  position: 'absolute',
-                  left: Dimensions.get('window').width * 0.8,
-                  marginRight: 40,
-                }}
-                onPress={() => {
-                  showImageModal('Selfie', selfieImage);
-                }}>
-                <FontAwesomeIcon color="#2A4CD0" icon={faImage} size={32} />
-              </Pressable>
-            )}
+            
           </View>
         </View>
       </View>
+
+      {journeyId && (
+        <Text
+          style={{
+            color: 'black',
+            alignSelf: 'center',
+            marginBottom: 25,
+            fontSize: 18,
+            position: 'absolute',
+            top: Dimensions.get('window').height * 0.85,
+          }}
+          selectable={true}>
+          <Text style={{fontWeight: 'bold'}}>Journey Id: </Text>
+          {journeyId}
+        </Text>
+      )}
 
       <Button
         buttonColor="#FFFFF"
@@ -238,13 +214,6 @@ const App = () => {
         onPress={resetJourney}>
         Test New Journey
       </Button>
-
-      <AppModal
-        modalVisible={modalVisible}
-        heading={modalTitle}
-        imageSrc={modalImage}
-        buttonCallback={() => setModalVisible(false)}
-      />
     </SafeAreaView>
   );
 };
