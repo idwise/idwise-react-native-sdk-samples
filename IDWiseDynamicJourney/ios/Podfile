@@ -7,15 +7,11 @@ source 'https://github.com/idwise/ios-sdk'
 platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
-plugin 'cocoapods-user-defined-build-types', {
-  verbose: true
-}
-enable_user_defined_build_types!
 
 target 'idwiseReactNativeSample' do
   config = use_native_modules!
 
-  pod 'IDWise', '4.1.6', :build_type => :dynamic_framework
+  pod 'IDWise'
 
   use_react_native!(
     :path => config[:reactNativePath],

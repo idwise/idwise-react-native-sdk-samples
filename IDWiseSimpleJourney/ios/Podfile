@@ -4,18 +4,22 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 source 'https://cdn.cocoapods.org/'
 source 'https://github.com/idwise/ios-sdk'
 
-#platform :ios, '11.0'
+platform :ios, '13.0'
 install! 'cocoapods', :deterministic_uuids => false
 
-plugin 'cocoapods-user-defined-build-types', {
-  verbose: true
-}
-enable_user_defined_build_types!
+
 
 target 'idwiseReactNativeSample' do
   config = use_native_modules!
 
-  pod 'IDWise', '4.1.6', :build_type => :dynamic_framework
+  pod 'IDWise'
+  pod 'Firebase/Analytics'
+  pod 'GoogleMaps', '~> 7.3.0'
+  pod 'Google-Maps-iOS-Utils', '~> 4.1.0'
+  pod 'Firebase/Messaging'
+  pod 'MoEngageRichNotification','7.4.0'
+
+
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -32,7 +36,7 @@ target 'idwiseReactNativeSample' do
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable the next line.
-  use_flipper!()
+  use_flipper!({ 'Flipper' => '0.162.0' })
 
   post_install do |installer|
     react_native_post_install(installer)
