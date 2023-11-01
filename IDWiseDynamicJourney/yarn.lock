@@ -3353,6 +3353,11 @@ iconv-lite@0.4.24:
   dependencies:
     safer-buffer ">= 2.1.2 < 3"
 
+idwise-react-native-sdk@1.0.102:
+  version "1.0.102"
+  resolved "https://registry.yarnpkg.com/idwise-react-native-sdk/-/idwise-react-native-sdk-1.0.102.tgz#db6cb143f9e547f3bfd0e8eb1b2416c8cbaf7f75"
+  integrity sha512-2YkUs0fsKyGUWMGMQ66l5tvL9l7u8GCQDELcZLWeIcHmYYxLUntWT7+vfxiJamKIOhNH7m+f7UfKsU5TO72Z/g==
+
 ignore@^4.0.6:
   version "4.0.6"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-4.0.6.tgz#750e3db5862087b4737ebac8207ffd1ef27b25fc"

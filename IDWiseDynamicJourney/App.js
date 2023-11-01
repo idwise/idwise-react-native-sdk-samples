@@ -8,20 +8,15 @@
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useEffect, useState} from 'react';
-import {
-  NativeEventEmitter,
-  NativeModules,
-  View,
-  Text,
-  SafeAreaView,
-  Dimensions,
-} from 'react-native';
+import {View, Text, SafeAreaView, Dimensions} from 'react-native';
 import {StyleSheet} from 'react-native';
 import {Button} from 'react-native-paper';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {AsyncStorageKeys} from './constants';
 import uuid from 'react-native-uuid';
+import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
+import {IDWiseSDKTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
 
 const App = () => {
   const isDarkMode = false;
@@ -38,64 +33,63 @@ const App = () => {
   const [journeyId, setJourneyId] = useState(null);
   const [stepButtonEnable, setStepButtonEnable] = useState(false);
 
-  const {IDWiseModule} = NativeModules;
-
-  useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(IDWiseModule);
-
-    eventEmitter.addListener('onError', event => {
-      console.log(
-        `An Error has occured  ${event.errorCode} : ${event.errorMessage}`,
-      );
-    });
-
-    eventEmitter.addListener('onJourneyStarted', event => {
-      console.log(`Journey Started with id ${event.journeyId}`);
-      setStepButtonEnable(true);
-      //Save Reference No using AsyncStorage
-      setJourneyId(event.journeyId);
-      AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, event.journeyId);
-
-      IDWiseModule.getJourneySummary(event.journeyId);
-    });
-
-    eventEmitter.addListener('onJourneyResumed', event => {
-      setJourneyId(event.journeyId);
-      console.log(`Journey Resumed with id ${event.journeyId}`);
-      setStepButtonEnable(true);
-      IDWiseModule.getJourneySummary(event.journeyId);
-    });
-
-    eventEmitter.addListener('onJourneyFinished', event => {
-      console.log(`Journey Completed with id ${event.journeyId}`);
-    });
-
-    eventEmitter.addListener('onJourneyCancelled', event => {
-      console.log(`Journey Cancelled with id ${event.journeyId}`);
-    });
-
-    eventEmitter.addListener('onJourneySummary', event => {
-      console.log(`Journey Summary for id ${event.journeyId}`);
-      console.log(`Journey Step Summaries ${event.journeyStepSummaries}`);
-      console.log(`Journey Result ${event.journeyResult}`);
-      console.log(`Journey Is Complete ${event.journeyIsComplete}`);
-    });
-
-    eventEmitter.addListener('onStepCaptured', event => {
-      console.log(`Step Captured with id ${event.stepId}`);
-    });
-
-    eventEmitter.addListener('onStepResult', event => {
-      console.log(`Step Result with id ${event.stepId} : ${event.stepResult}`);
-    });    
-  });
-
   const resetJourney = () => {
     AsyncStorage.clear();
     setJourneyId(null);
     setStepButtonEnable(false);
-    IDWiseModule.unloadSDK();
+    IDWise.unloadSDK();
     startResumeJourney();
+  };
+
+  const initializeCallback = {
+    onError(data) {
+      console.log('Event onInitalizeError:', data);
+    },
+  };
+
+  const journeySummaryCallback = {
+    onJourneySummary(data) {
+      console.log('Event onJourneySummary received:', data);
+    },
+    onError(data) {
+      console.log('Event onJourneySummaryError:', data);
+    },
+  };
+
+  const journeyCallback = {
+    onJourneyStarted(data) {
+      console.log(`Journey Started with id ${data.journeyId}`);
+      setStepButtonEnable(true);
+      //Save Reference No using AsyncStorage
+      setJourneyId(data.journeyId);
+      AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, data.journeyId);
+
+      IDWise.getJourneySummary(data.journeyId, journeySummaryCallback);
+    },
+    onJourneyResumed(data) {
+      setJourneyId(data.journeyId);
+      console.log(`Journey Resumed with id ${data.journeyId}`);
+      setStepButtonEnable(true);
+      IDWise.getJourneySummary(data.journeyId, journeySummaryCallback);
+    },
+    onJourneyFinished(data) {
+      console.log(`Journey Fininshed with id ${data.journeyId}`);
+    },
+    onJourneyCancelled(data) {
+      console.log(`Journey Cancelled with id ${data.journeyId}`);
+    },
+    onError(data) {
+      console.log('Event onJourneyError received:', data);
+    },
+  };
+
+  const stepCallback = {
+    onStepCaptured(data) {
+      console.log('Event onStepCaptured received:', data);
+    },
+    onStepResult(data) {
+      console.log('Event onStepResult received:', data);
+    },
   };
 
   useEffect(() => {
@@ -104,27 +98,31 @@ const App = () => {
 
   const startResumeJourney = () => {
     const clientKey = '<YOUR_CLIENT_KEY>';
-    const theme = 'SYSTEM_DEFAULT'; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
+    const theme = IDWiseSDKTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
     const journeyDefinitionId = '<JOURNEY_DEFINITION_ID>';
     var referenceNo = null; //<REFERENCE_NO>
     const locale = '<LOCALE>';
 
-    IDWiseModule.initialize(clientKey, theme);
+    IDWise.initialize(clientKey, theme, initializeCallback);
 
     AsyncStorage.getItem(AsyncStorageKeys.JOURNEY_ID).then(journeyId => {
       if (journeyId == null) {
         referenceNo = 'idwise_test_' + uuid.v4();
-        IDWiseModule.startDynamicJourney(
+        IDWise.startDynamicJourney(
           journeyDefinitionId,
           referenceNo,
           locale,
+          journeyCallback,
+          stepCallback,
         );
       } else {
-        IDWiseModule.resumeDynamicJourney(
+        IDWise.resumeDynamicJourney(
           journeyDefinitionId,
           journeyId,
           locale,
+          journeyCallback,
+          stepCallback,
         );
       }
     });
@@ -132,7 +130,7 @@ const App = () => {
 
   const navigateStep = stepId => {
     console.log(stepId, 'STEP_ID');
-    IDWiseModule.startStep(stepId);
+    IDWise.startStep(stepId);
   };
 
   return (
@@ -163,7 +161,6 @@ const App = () => {
               onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
               ID Document
             </Button>
-           
           </View>
 
           <View
@@ -184,7 +181,6 @@ const App = () => {
               onPress={() => navigateStep(STEP_SELFIE)}>
               Selfie
             </Button>
-            
           </View>
         </View>
       </View>
