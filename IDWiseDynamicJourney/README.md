@@ -1,1 +1,0 @@
-# idwise-react-native-example
