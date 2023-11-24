@@ -3674,10 +3674,10 @@ human-signals@^2.1.0:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-idwise-react-native-sdk@^1.0.2:
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/idwise-react-native-sdk/-/idwise-react-native-sdk-1.0.3.tgz#55422062eecdc7b551181326c0d3c1f101a2ffd5"
-  integrity sha512-6W2F96t+YZ4H95Y2QbqS1nm98rIFxOOLdND3GHLwemF43VwQTFRqKS8euQN+pGEAMknpLnffXYqE4r/jXNwokg==
+idwise-react-native-sdk@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/idwise-react-native-sdk/-/idwise-react-native-sdk-1.0.4.tgz#7b7ee75c726a3131fca4fc00ee13b95421538946"
+  integrity sha512-d+Hbc9fpX5pS3kS/6R6oHd+6zdGKhVp/mf4M3xuyAqrOIdn5dIplFP9Co1xRJAfL/P0zDwcu8WB2h0L1DE9yNg==
 
 ieee754@^1.1.13:
   version "1.2.1"
@@ -5528,9 +5528,9 @@ react-is@^17.0.1:
   integrity sha512-w2GsyukL62IJnlaff/nRegPQR94C/XXamvMWmSHRJ4y7Ts/4ocGRmTHvOs8PSE6pB3dWOrD/nueuU5sduBsQ4w==
 
 react-native-paper@^5.7.2:
-  version "5.11.1"
-  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.1.tgz#34f612d6fb28099334db08a1bd109086ea91dcac"
-  integrity sha512-axqRTagGL8LtuYh172cx2Q2THOVJ3PTpPjCKhL5ECRdpJs2ceiboVecSiOIBuO3H7dVpaneptBA0vJr9HeVHwg==
+  version "5.11.2"
+  resolved "https://registry.yarnpkg.com/react-native-paper/-/react-native-paper-5.11.2.tgz#447b7cae8eaf578e6133ca8f56131b78f4c3cfa1"
+  integrity sha512-UbMkoGtOzU2T54b1uUnqc6YA0kz5mCUxoA4VLcePHDAi/Nvk54gm/TkZnP6nImUMjpcSBI4Fj0GI1cx9Cp169w==
   dependencies:
     "@callstack/react-theme-provider" "^3.0.9"
     color "^3.1.2"

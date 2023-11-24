@@ -73,7 +73,7 @@ PODS:
   - hermes-engine (0.72.7):
     - hermes-engine/Pre-built (= 0.72.7)
   - hermes-engine/Pre-built (0.72.7)
-  - idwise-mobile-sdk (1.0.3):
+  - idwise-mobile-sdk (1.0.4):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - libevent (2.1.12)
@@ -686,7 +686,7 @@ SPEC CHECKSUMS:
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   hermes-engine: 9180d43df05c1ed658a87cc733dc3044cf90c00a
-  idwise-mobile-sdk: 8e8beb4ebd152568f1a8e14e63d68ccbb83b4bd2
+  idwise-mobile-sdk: ce957ee00fda4fff9bec341faaaf7efa1a8c4836
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   RCT-Folly: 424b8c9a7a0b9ab2886ffe9c3b041ef628fd4fb1
@@ -727,6 +727,6 @@ SPEC CHECKSUMS:
   Yoga: 4c3aa327e4a6a23eeacd71f61c81df1bcdf677d5
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: eeacd6ffe73f50be8c369c08c3f27494e6860f57
+PODFILE CHECKSUM: 70d170d1ef6537176694682d5df05ed59458cd85
 
 COCOAPODS: 1.14.2
