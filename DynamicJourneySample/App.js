@@ -97,10 +97,10 @@ const App = () => {
   }, []);
 
   const startResumeJourney = () => {
-    const clientKey = 'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0='; // Provided by IDWise
+    const clientKey = '<CLIENT_KEY>'; // Provided by IDWise
     const theme = IDWiseSDKTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const journeyDefinitionId = 'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23';
+    const journeyDefinitionId = '<JOURNEY_DEF_ID>'; // as known as FLOW ID, provided by IDWise
     var referenceNo = '<REFERENCE_NO>';
     const locale = 'en';
 
