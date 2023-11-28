@@ -83,12 +83,13 @@ const App = () => {
   };
 
   const stepCallback = {
-    onStepCaptured(data) {
-      console.log('Event onStepCaptured received:', data);
+    onStepCaptured(stepId, capturedImageB64) {
+      console.log('Event onStepCaptured stepId:', stepId);
     },
-    onStepResult(data) {
-      console.log('Event onStepResult received:', data);
-    },
+    onStepResult(stepId,stepResult) {
+      console.log('Event onStepResult stepId:', stepId);
+      console.log('Event onStepResult stepResult:', stepResult);
+    }
   };
 
   useEffect(() => {
@@ -96,10 +97,10 @@ const App = () => {
   }, []);
 
   const startResumeJourney = () => {
-    const clientKey = '<CLIENT_KEY?'; // Provided by IDWise
+    const clientKey = 'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0='; // Provided by IDWise
     const theme = IDWiseSDKTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const journeyDefinitionId = '<JOURNEY_DEFINITION_ID>';
+    const journeyDefinitionId = 'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23';
     var referenceNo = '<REFERENCE_NO>';
     const locale = 'en';
 
