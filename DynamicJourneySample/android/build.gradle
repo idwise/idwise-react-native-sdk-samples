@@ -13,7 +13,6 @@ buildscript {
     repositories {
         google()
         mavenCentral()
-        maven { url 'https://mobile-sdk.idwise.ai/releases/' }
     }
     dependencies {
         classpath("com.android.tools.build:gradle")
@@ -25,6 +24,5 @@ allprojects {
   repositories {
     google()
     mavenCentral()
-    maven { url 'https://mobile-sdk.idwise.ai/releases/' }
   }
 }
