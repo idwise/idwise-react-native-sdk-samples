@@ -7,15 +7,15 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Button} from 'react-native-paper';
 
-import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
-import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
+import {IDWiseSDKTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
 import uuid from 'react-native-uuid';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { AsyncStorageKeys } from './constants';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {AsyncStorageKeys} from './constants';
 
 const App = () => {
   const isDarkMode = false;
@@ -86,10 +86,13 @@ const App = () => {
     onStepCaptured(stepId, capturedImageB64) {
       console.log('Event onStepCaptured stepId:', stepId);
     },
-    onStepResult(stepId,stepResult) {
+    onStepResult(stepId, stepResult) {
       console.log('Event onStepResult stepId:', stepId);
       console.log('Event onStepResult stepResult:', stepResult);
-    }
+    },
+    onStepCancelled(stepId) {
+      console.log('Event onStepCancelled stepId:', stepId);
+    },
   };
 
   useEffect(() => {
