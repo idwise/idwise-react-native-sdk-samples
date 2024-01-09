@@ -6,92 +6,71 @@
  * @flow strict-local
  */
 
-import React, { useEffect } from 'react';
-import type { Node } from 'react';
-import { Platform } from 'react-native';
-import { NativeEventEmitter, NativeModules, Button, View, Text, Image } from 'react-native';
-import {
-  SafeAreaView,
-  StyleSheet,
-  useColorScheme,
-} from 'react-native';
+import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
+import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import React from 'react';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import {
-  Colors
-} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-
-const App: () => Node = () => {
-
+const App = () => {
   const isDarkMode = false;
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
+  const initializeCallback = {
+    onError(data) {
+      console.log('Event onInitalizeError:', data);
+    },
+  };
 
-  const { IDWiseModule } = NativeModules;
-
-  useEffect(() => {
-
-    const eventEmitter = new NativeEventEmitter(IDWiseModule);
-
-    eventEmitter.addListener('onError', (event) => {
-      console.log(`An Error has occured  ${event.errorCode} : ${event.message}`);
-    });
-
-    eventEmitter.addListener('onJourneyStarted', (event) => {
-      console.log(`Journey Started with id ${event.journeyId}`);
-    });
-
-    eventEmitter.addListener('onJourneyFinished', (event) => {
-      console.log(`Journey Completed with id ${event.journeyId}`);
-    });
-
-    eventEmitter.addListener('onJourneyCancelled', (event) => {
-      console.log(`Journey Cancelled with id ${event.journeyId}`);
-    });
-
-
-  })
-
+  const journeyCallback = {
+    onJourneyStarted(data) {
+      console.log('Event onJourneyStarted received:', data);
+    },
+    onJourneyResumed(data) {
+      console.log('Event onJourneyResumed received:', data);
+    },
+    onJourneyFinished(data) {
+      console.log('Event onJourneyFinished received:', data);
+    },
+    onJourneyCancelled(data) {
+      console.log('Event onJourneyCancelled received:', data);
+    },
+    onError(data) {
+      console.log('Event onError received:', data);
+    },
+  };
 
   const onPress = () => {
+    const theme = IDWiseSDKTheme.SYSTEM_DEFAULT;
+    IDWise.initialize('<YOUR_CLIENT_KEY>', theme, initializeCallback);
 
-    //you can pre-load this on componentDidMount() if you want to
-
-    const theme = "SYSTEM_DEFAULT"; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
-    IDWiseModule.initialize("<YOUR_CLIENT_KEY>", theme);
-
-    IDWiseModule.startJourney("<JOURNEY_DEFINITION_ID>", "<REFERENCE_NO>", "<LOCALE>");
-
+    IDWise.startJourney(
+      '<JOURNEY_DEFINITION_ID>',
+      '<REFERENCE_NO>',
+      '<LOCALE>',
+      journeyCallback,
+    );
   };
 
   return (
     <SafeAreaView style={backgroundStyle}>
       <View style={styles.loginButtonSection}>
+        <Text style={styles.heading}>IDWise: Trust but Verify</Text>
 
-
-
-        <Text style={styles.heading}>
-          IDWise: Trust but Verify
-        </Text>
-
-        <Text style={styles.body}>
-          IDWise sample app for React-Native
-        </Text>
+        <Text style={styles.body}>IDWise sample app for React-Native</Text>
 
         <Button
           title="Click to start Verification!"
           style={styles.loginButton}
           color="#841584"
-          onPress={
-            () => {
-              onPress()
-            }
-          }
+          onPress={() => {
+            onPress();
+          }}
         />
-
       </View>
     </SafeAreaView>
   );
@@ -102,18 +81,18 @@ const styles = StyleSheet.create({
     color: '#000',
     marginBottom: 40,
     fontSize: 30,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   body: {
     color: '#000',
     marginBottom: 40,
-    fontSize: 12
+    fontSize: 12,
   },
   loginButtonSection: {
     width: '100%',
     height: '100%',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   sectionContainer: {
     marginTop: 32,
