@@ -7,21 +7,21 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Button} from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
-import {IDWiseSDKTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
+import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
+import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
 import uuid from 'react-native-uuid';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {AsyncStorageKeys} from './constants';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { AsyncStorageKeys } from './constants';
 
 const App = () => {
   const isDarkMode = false;
 
-  const STEP_ID_DOCUMENT = '0';
-  const STEP_SELFIE = '2';
+  const STEP_ID_DOCUMENT = '10';
+  const STEP_SELFIE = '20';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -49,6 +49,7 @@ const App = () => {
   const journeySummaryCallback = {
     onJourneySummary(data) {
       console.log('Event onJourneySummary received:', data);
+      finishDynamicJourney();
     },
     onError(data) {
       console.log('Event onJourneySummaryError:', data);
@@ -63,13 +64,13 @@ const App = () => {
       setJourneyId(data.journeyId);
       AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, data.journeyId);
 
-      IDWise.getJourneySummary(data.journeyId, journeySummaryCallback);
+      IDWise.getJourneySummary(journeySummaryCallback);
     },
     onJourneyResumed(data) {
       setJourneyId(data.journeyId);
       console.log(`Journey Resumed with id ${data.journeyId}`);
       setStepButtonEnable(true);
-      IDWise.getJourneySummary(data.journeyId, journeySummaryCallback);
+      IDWise.getJourneySummary(journeySummaryCallback);
     },
     onJourneyFinished(data) {
       console.log(`Journey Fininshed with id ${data.journeyId}`);
@@ -93,11 +94,18 @@ const App = () => {
     onStepCancelled(stepId) {
       console.log('Event onStepCancelled stepId:', stepId);
     },
+    onStepSkipped(stepId) {
+      console.log('Event onStepSkipped stepId:', stepId);
+    },
   };
 
   useEffect(() => {
     startResumeJourney();
   }, []);
+
+  const finishDynamicJourney = () => {
+    IDWise.finishDynamicJourney();
+  }
 
   const startResumeJourney = () => {
     const clientKey = '<CLIENT_KEY>'; // Provided by IDWise
