@@ -3697,10 +3697,10 @@ human-signals@^2.1.0:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-idwise-react-native-sdk@4.6.4:
-  version "4.6.4"
-  resolved "https://registry.yarnpkg.com/idwise-react-native-sdk/-/idwise-react-native-sdk-4.6.4.tgz#483bd45e958ac1fbeaa6d1d58985d8eef34b8dcf"
-  integrity sha512-q+Evnk0lEoTwoHwyMUz42eLF2/MF3FKQjSW9yk8jacQQKsSmgGkSJanUFrg5+BU92kyeT3+E4zwTnPhHxr9p3w==
+idwise-react-native-sdk@4.7.0:
+  version "4.7.0"
+  resolved "https://registry.yarnpkg.com/idwise-react-native-sdk/-/idwise-react-native-sdk-4.7.0.tgz#b9c54a181a18ad7407f8a24b873f724c77d03bfa"
+  integrity sha512-cDR6jAF9JIEvQmPAIwhhDIZja9NDGCDctfkSIZG8v2xVdQsm24X1OYHZfUrXafVK0EIbTZL0fanJaXX69ZKaTA==
 
 ieee754@^1.1.13:
   version "1.2.1"
