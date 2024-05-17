@@ -17,7 +17,7 @@ class IDWiseModule: RCTEventEmitter  {
   public static var emitter: RCTEventEmitter!
   
   open override func supportedEvents() -> [String] {
-     ["onJourneyStarted", "onJourneyCancelled" ,"onError", "onJourneyFinished"]
+     ["onJourneyStarted", "onJourneyCancelled" ,"onError", "onJourneyFinished", "onJourneyResumed"]
    }
   
   override init() {
@@ -64,7 +64,8 @@ extension IDWiseModule: IDWiseSDKJourneyDelegate {
   }
   
   func onJourneyResumed(journeyID: String) {
-    
+    IDWiseModule.emitter.sendEvent(withName: "onJourneyResumed", body: ["journeyId": self.journeyID])
+    print("Journey Resumed")
   }
   
   func JourneyFinished() {
@@ -81,7 +82,6 @@ extension IDWiseModule: IDWiseSDKJourneyDelegate {
   func onError(error: IDWiseSDKError) {
     IDWiseModule.emitter.sendEvent(withName: "onError", body: ["errorCode": error.code, "message": error.message] as [String : Any])
   }
-  
   
 }
 

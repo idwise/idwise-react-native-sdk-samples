@@ -44,6 +44,10 @@ const App: () => Node = () => {
       console.log(`Journey Started with id ${event.journeyId}`);
     });
 
+    eventEmitter.addListener('onJourneyResumed', (event) => {
+      console.log(`Journey resumed with id ${event.journeyId}`);
+    });
+
     eventEmitter.addListener('onJourneyFinished', (event) => {
       console.log(`Journey Completed with id ${event.journeyId}`);
     });

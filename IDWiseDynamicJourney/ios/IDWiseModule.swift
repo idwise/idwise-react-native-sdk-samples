@@ -17,7 +17,7 @@ class IDWiseModule: RCTEventEmitter  {
   public static var emitter: RCTEventEmitter!
   
   open override func supportedEvents() -> [String] {
-     ["onJourneyStarted","onJourneyResumed", "onJourneyCancelled" ,"onError", "onJourneyFinished", "onJourneySummary", "onStepCaptured", "onStepResult"]
+    ["onJourneyStarted","onJourneyResumed", "onJourneyCancelled" ,"onError", "onJourneyFinished", "onJourneySummary", "onStepCaptured", "onStepResult", "onStepCancelled", "onStepSkipped"]
    }
   
   override init() {
@@ -81,13 +81,13 @@ class IDWiseModule: RCTEventEmitter  {
     }
   }
   
-  @objc func getJourneySummary(_ journeyId: String) {
-    IDWise.getJourneySummary(journeyId: journeyId, callback: { journeySummary,error in
+  @objc func getJourneySummary() {
+    
+    IDWise.getJourneySummary { journeySummary,error in
       if let summary = journeySummary {
         
         // encoding JSON response so react-native can consume it correctly
         var journeyStepSummaries = ""
-        var journeyDefinition = ""
         var journeyResult = ""
         
         do {
@@ -96,11 +96,7 @@ class IDWiseModule: RCTEventEmitter  {
                                      encoding: .utf8) {
             journeyStepSummaries = jsonString
           }
-          let encodedJourneyDefinition = try JSONEncoder().encode(summary.journeyDefinition)
-          if let jsonString = String(data: encodedJourneyDefinition,
-                                     encoding: .utf8) {
-            journeyDefinition = jsonString
-          }
+        
           let encodedJourneyResult = try JSONEncoder().encode(summary.journeyResult)
           if let jsonString = String(data: encodedJourneyResult,
                                      encoding: .utf8) {
@@ -111,7 +107,6 @@ class IDWiseModule: RCTEventEmitter  {
 
         IDWiseModule.emitter.sendEvent(withName: "onJourneySummary", body: ["journeyId": summary.journeyId,
                                                                             "journeyStepSummaries": journeyStepSummaries,
-                                                                            "journeyDefinition": journeyDefinition,
                                                                             "journeyResult": journeyResult,
                                                                             "journeyIsComplete": summary.isCompleted] as [String : Any])
       } else {
@@ -120,7 +115,7 @@ class IDWiseModule: RCTEventEmitter  {
         }
       }
       
-    })
+    }
   }
 
 }
@@ -130,6 +125,7 @@ extension IDWiseModule: IDWiseSDKJourneyDelegate {
     self.journeyID = journeyID
     IDWiseModule.emitter.sendEvent(withName: "onJourneyStarted", body: ["journeyId": journeyID])
     print("Journey started with journey Id : \(journeyID)")
+    getJourneySummary()
   }
   
   func onJourneyResumed(journeyID: String) {
@@ -154,6 +150,14 @@ extension IDWiseModule: IDWiseSDKJourneyDelegate {
 }
 
 extension IDWiseModule: IDWiseSDKStepDelegate {
+  func onStepCancelled(stepId: String) {
+    IDWiseModule.emitter.sendEvent(withName: "onStepCancelled", body: ["stepId": stepId])
+  }
+  
+  func onStepSkipped(stepId: String) {
+    IDWiseModule.emitter.sendEvent(withName: "onStepSkipped", body: ["stepId": stepId])
+  }
+  
   func onStepCaptured(stepId: Int, capturedImage: UIImage?) {
     IDWiseModule.emitter.sendEvent(withName: "onStepCaptured", body: ["stepId": stepId])
   }
@@ -180,3 +184,5 @@ extension IDWiseModule: IDWiseSDKStepDelegate {
   
   
 }
+
+

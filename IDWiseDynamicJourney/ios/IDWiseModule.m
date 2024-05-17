@@ -19,12 +19,14 @@ RCT_EXTERN_METHOD(startDynamicJourney:(NSString *)journeyDefinitionId
 RCT_EXTERN_METHOD(resumeDynamicJourney:(NSString *)journeyDefinitionId
                   :(NSString *)journeyId
                   :(NSString *)locale)
-RCT_EXTERN_METHOD(getJourneySummary:(NSString *)journeyId
+RCT_EXTERN_METHOD(getJourneySummary
                  )
 RCT_EXTERN_METHOD(startStep:(NSString *)stepId
                  )
 RCT_EXTERN_METHOD(startStepFromFileUpload:(NSString *)stepId
                   :(NSData *)data
                  )
+RCT_EXTERN_METHOD(unloadSDK
+                  )
 RCT_EXTERN_METHOD(supportedEvents)
 @end

@@ -13,11 +13,6 @@ target 'idwiseReactNativeSample' do
   config = use_native_modules!
 
   pod 'IDWise'
-  pod 'Firebase/Analytics'
-  pod 'GoogleMaps', '~> 7.3.0'
-  pod 'Google-Maps-iOS-Utils', '~> 4.1.0'
-  pod 'Firebase/Messaging'
-  pod 'MoEngageRichNotification','7.4.0'
 
 
 

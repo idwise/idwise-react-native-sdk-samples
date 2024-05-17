@@ -7,7 +7,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   NativeEventEmitter,
   NativeModules,
@@ -16,11 +16,11 @@ import {
   SafeAreaView,
   Dimensions,
 } from 'react-native';
-import {StyleSheet} from 'react-native';
-import {Button} from 'react-native-paper';
+import { StyleSheet } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {AsyncStorageKeys} from './constants';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { AsyncStorageKeys } from './constants';
 import uuid from 'react-native-uuid';
 
 const App = () => {
@@ -38,7 +38,7 @@ const App = () => {
   const [journeyId, setJourneyId] = useState(null);
   const [stepButtonEnable, setStepButtonEnable] = useState(false);
 
-  const {IDWiseModule} = NativeModules;
+  const { IDWiseModule } = NativeModules;
 
   useEffect(() => {
     const eventEmitter = new NativeEventEmitter(IDWiseModule);
@@ -56,14 +56,14 @@ const App = () => {
       setJourneyId(event.journeyId);
       AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, event.journeyId);
 
-      IDWiseModule.getJourneySummary(event.journeyId);
+      IDWiseModule.getJourneySummary();
     });
 
     eventEmitter.addListener('onJourneyResumed', event => {
       setJourneyId(event.journeyId);
       console.log(`Journey Resumed with id ${event.journeyId}`);
       setStepButtonEnable(true);
-      IDWiseModule.getJourneySummary(event.journeyId);
+      IDWiseModule.getJourneySummary();
     });
 
     eventEmitter.addListener('onJourneyFinished', event => {
@@ -87,7 +87,16 @@ const App = () => {
 
     eventEmitter.addListener('onStepResult', event => {
       console.log(`Step Result with id ${event.stepId} : ${event.stepResult}`);
-    });    
+    });
+
+    eventEmitter.addListener('onStepCancelled', event => {
+      console.log(`Step cancelled with id ${event.stepId}`);
+    });
+
+    eventEmitter.addListener('onStepSkipped', event => {
+      console.log(`Step skipped with id ${event.stepId}`);
+    });
+
   });
 
   const resetJourney = () => {
@@ -137,14 +146,14 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <View style={{flex: 1, justifyContent: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
         <Text style={styles.body}>Welcome to</Text>
         <Text style={styles.heading}>Verification Journey</Text>
         <Text style={styles.body}>
           Please take some time to verify your identity
         </Text>
 
-        <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <View
             style={{
               flexDirection: 'row',
@@ -163,7 +172,7 @@ const App = () => {
               onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
               ID Document
             </Button>
-           
+
           </View>
 
           <View
@@ -175,7 +184,7 @@ const App = () => {
             <Button
               mode="contained"
               buttonColor="#2A4CD0"
-              style={[styles.stepButtonStyle, {marginTop: 10}]}
+              style={[styles.stepButtonStyle, { marginTop: 10 }]}
               contentStyle={styles.stepContentStyle}
               labelStyle={{
                 fontSize: 18,
@@ -184,7 +193,7 @@ const App = () => {
               onPress={() => navigateStep(STEP_SELFIE)}>
               Selfie
             </Button>
-            
+
           </View>
         </View>
       </View>
@@ -200,7 +209,7 @@ const App = () => {
             top: Dimensions.get('window').height * 0.85,
           }}
           selectable={true}>
-          <Text style={{fontWeight: 'bold'}}>Journey Id: </Text>
+          <Text style={{ fontWeight: 'bold' }}>Journey Id: </Text>
           {journeyId}
         </Text>
       )}
