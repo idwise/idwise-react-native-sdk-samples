@@ -81,6 +81,12 @@ class IDWiseModule: RCTEventEmitter  {
     }
   }
   
+  @objc func unloadSDK() {
+    DispatchQueue.main.async {
+      IDWise.unloadSDK()
+    }
+  }
+  
   @objc func getJourneySummary() {
     
     IDWise.getJourneySummary { journeySummary,error in
