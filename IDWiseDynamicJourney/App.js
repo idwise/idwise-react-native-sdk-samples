@@ -103,7 +103,6 @@ const App = () => {
     AsyncStorage.clear();
     setJourneyId(null);
     setStepButtonEnable(false);
-    IDWiseModule.unloadSDK();
     startResumeJourney();
   };
 
