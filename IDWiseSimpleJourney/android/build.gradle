@@ -6,7 +6,7 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 31
         targetSdkVersion = 31
-        ndkVersion = "21.4.7075529"
+        ndkVersion = "23.1.7779620"
     }
     repositories {
         google()
@@ -34,10 +34,6 @@ allprojects {
 
         google()
         maven { url 'https://www.jitpack.io' }
-        maven {
-            url 'http://mobile-sdk.idwise.ai/releases/'
-            allowInsecureProtocol = true
-        }
         exclusiveContent {
             // We get React Native's Android binaries exclusively through npm,
             // from a local Maven repo inside node_modules/react-native/.

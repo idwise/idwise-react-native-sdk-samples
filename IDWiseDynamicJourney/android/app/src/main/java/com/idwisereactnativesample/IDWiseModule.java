@@ -123,7 +123,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void getJourneySummary(String journeyId) {
+    public void getJourneySummary() {
         Function2<? super JourneySummary, ? super IDWiseSDKError, Unit> summaryCallback = (Function2<JourneySummary, IDWiseSDKError, Unit>) (summary, error) -> {
 
             WritableMap params = Arguments.createMap();
@@ -132,7 +132,6 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
                 Gson gson = new Gson();
                 params.putString("journeyId", summary.getJourneyId());
                 params.putString("journeyStepSummaries", gson.toJson(summary.getStepSummaries()));
-                params.putString("journeyDefinition", gson.toJson(summary.getJourneyDefinition()));
                 params.putString("journeyResult", gson.toJson(summary.getJourneyResult()));
                 params.putBoolean("journeyIsComplete", summary.isCompleted());
                 sendEvent("onJourneySummary", params);
@@ -147,7 +146,7 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
             return null;
         };
 
-        IDWise.INSTANCE.getJourneySummary(journeyId, summaryCallback);
+        IDWise.INSTANCE.getJourneySummary(summaryCallback);
     }
 
     @ReactMethod
@@ -224,6 +223,20 @@ public class IDWiseModule extends ReactContextBaseJavaModule {
                 params.putString("stepId", s);
                 params.putString("stepResult", new Gson().toJson(stepResult));
                 sendEvent("onStepResult", params);
+            }
+
+            @Override
+            public void onStepCancelled(@NonNull String s) {
+                WritableMap params = Arguments.createMap();
+                params.putString("stepId", s);
+                sendEvent("onStepCancelled", params);
+            }
+
+            @Override
+            public void onStepSkipped(@NonNull String s) {
+                WritableMap params = Arguments.createMap();
+                params.putString("stepId", s);
+                sendEvent("onStepSkipped", params);
             }
 
             @Override
