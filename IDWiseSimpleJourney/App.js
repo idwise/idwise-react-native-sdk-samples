@@ -6,12 +6,12 @@
  * @flow strict-local
  */
 
-import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
-import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import {IDWise} from 'idwise-nfc-react-native-sdk/src/IDWise';
+import {IDWiseSDKTheme} from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
 import React from 'react';
-import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
   const isDarkMode = false;
@@ -46,12 +46,16 @@ const App = () => {
 
   const onPress = () => {
     const theme = IDWiseSDKTheme.SYSTEM_DEFAULT;
-    IDWise.initialize('<YOUR_CLIENT_KEY>', theme, initializeCallback);
+    IDWise.initialize(
+      'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0=',
+      theme,
+      initializeCallback,
+    );
 
     IDWise.startJourney(
-      '<JOURNEY_DEFINITION_ID>',
-      '<REFERENCE_NO>',
-      '<LOCALE>',
+      'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23-nfc',
+      'idw_test',
+      'en',
       journeyCallback,
     );
   };
