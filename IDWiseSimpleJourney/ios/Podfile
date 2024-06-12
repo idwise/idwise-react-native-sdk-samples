@@ -19,9 +19,8 @@ end
 
 target 'SimpleJourneySample' do
   config = use_native_modules!
-  pod 'IDWise'
   
-
+  flags = get_default_flags()
 
   use_react_native!(
     :path => config[:reactNativePath],
