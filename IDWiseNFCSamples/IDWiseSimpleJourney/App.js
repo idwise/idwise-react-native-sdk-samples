@@ -6,12 +6,12 @@
  * @flow strict-local
  */
 
-import {IDWise} from 'idwise-nfc-react-native-sdk/src/IDWise';
-import {IDWiseSDKTheme} from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
+import { IDWise } from 'idwise-nfc-react-native-sdk/src/IDWise';
+import { IDWiseTheme } from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
 import React from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
   const isDarkMode = false;
@@ -26,37 +26,43 @@ const App = () => {
     },
   };
 
-  const journeyCallback = {
-    onJourneyStarted(data) {
-      console.log('Event onJourneyStarted received:', data);
+  const journeyCallbacks = {
+    onJourneyStarted(journeyStartedInfo) {
+      console.log('onJourneyStarted:', journeyStartedInfo);
     },
-    onJourneyResumed(data) {
-      console.log('Event onJourneyResumed received:', data);
+    onJourneyResumed(journeyResumedInfo) {
+      console.log('onJourneyResumed:', journeyResumedInfo);
     },
-    onJourneyFinished(data) {
-      console.log('Event onJourneyFinished received:', data);
+    onJourneyCompleted(journeyCompletedInfo) {
+      console.log('onJourneyCompleted:', journeyCompletedInfo);
     },
-    onJourneyCancelled(data) {
-      console.log('Event onJourneyCancelled received:', data);
+    onJourneyCancelled(journeyCancelledInfo) {
+      console.log('onJourneyCancelled:', journeyCancelledInfo);
     },
-    onError(data) {
-      console.log('Event onError received:', data);
+    onError(error) {
+      console.log('onError:', error);
     },
   };
 
   const onPress = () => {
-    const theme = IDWiseSDKTheme.SYSTEM_DEFAULT;
+    const theme = IDWiseTheme.SYSTEM_DEFAULT;
     IDWise.initialize(
-      'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0=',
+      "YOUR_CLIENT_KEY",
       theme,
       initializeCallback,
     );
 
+    var applicantDetails = {
+      "full_name": "Waqar Khan",
+      "sex": "Male"// etc.
+    };
+
     IDWise.startJourney(
-      'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23-nfc',
-      'idw_test',
-      'en',
-      journeyCallback,
+      "FLOW_ID",
+      'YOUR_REFERENCE_NO',
+      'LOCALE',
+      applicantDetails,
+      journeyCallbacks,
     );
   };
 
