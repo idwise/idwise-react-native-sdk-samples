@@ -5,13 +5,13 @@
  * @format
  * @flow strict-local
  */
-
-import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
-import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+//Legacy Integration
+import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
+import {IDWiseSDKTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
 import React from 'react';
-import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
   const isDarkMode = false;
