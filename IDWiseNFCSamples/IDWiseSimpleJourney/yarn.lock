@@ -4118,10 +4118,10 @@ human-signals@^2.1.0:
   resolved "https://registry.yarnpkg.com/human-signals/-/human-signals-2.1.0.tgz#dc91fcba42e4d06e4abaed33b3e7a3c02f514ea0"
   integrity sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==
 
-idwise-nfc-react-native-sdk@4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/idwise-nfc-react-native-sdk/-/idwise-nfc-react-native-sdk-4.9.0.tgz#202858dfed00d970f4e6fe92475c3996574420b6"
-  integrity sha512-teI0foNgfcsjEO7V1+/e5C/5UmtmS1sBeOpEjJajw+DXMiTRBin1ScjetsTduz2rN3/5p1Ji5ZcldJO9Tl/BeQ==
+idwise-nfc-react-native-sdk@5.0.2:
+  version "5.0.2"
+  resolved "https://registry.yarnpkg.com/idwise-nfc-react-native-sdk/-/idwise-nfc-react-native-sdk-5.0.2.tgz#72c966105130db9fa0bc0d572f260bca28c0091a"
+  integrity sha512-bpNphzytWabIy0RyL4kEOXgxwI213YmPf3ED4ZneDdtkVSwFJKf8g8MyJOu6S5sbrVio+weAqkIHDcSAYFWsWg==
 
 ieee754@^1.1.13:
   version "1.2.1"

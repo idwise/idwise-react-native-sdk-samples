@@ -8,10 +8,11 @@
 
 import {IDWise} from 'idwise-nfc-react-native-sdk/src/IDWise';
 import {IDWiseTheme} from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
-import React from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import React from 'react';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+
+import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
   const isDarkMode = false;
@@ -26,33 +27,45 @@ const App = () => {
     },
   };
 
-  const journeyCallback = {
-    onJourneyStarted(data) {
-      console.log('Event onJourneyStarted received:', data);
+  const journeyCallbacks = {
+    onJourneyStarted(journeyStartedInfo) {
+      console.log('onJourneyStarted:', journeyStartedInfo);
     },
-    onJourneyResumed(data) {
-      console.log('Event onJourneyResumed received:', data);
+    onJourneyResumed(journeyResumedInfo) {
+      console.log('onJourneyResumed:', journeyResumedInfo);
     },
-    onJourneyCompleted(data) {
-      console.log('Event onJourneyFinished received:', data);
+
+    onJourneyCompleted(journeyCompletedInfo) {
+      console.log('onJourneyCompleted:', journeyCompletedInfo);
     },
-    onJourneyCancelled(data) {
-      console.log('Event onJourneyCancelled received:', data);
+    onJourneyCancelled(journeyCancelledInfo) {
+      console.log('onJourneyCancelled:', journeyCancelledInfo);
     },
-    onError(data) {
-      console.log('Event onError received:', data);
+    onError(error) {
+      console.log('onError:', error);
     },
   };
 
   const onPress = () => {
     const theme = IDWiseTheme.SYSTEM_DEFAULT;
-    IDWise.initialize('YOUR-CLIENT-KEY-HERE', theme, initializeCallback);
+
+    IDWise.initialize(
+      "YOUR_CLIENT_KEY",
+      theme,
+      initializeCallback,
+    );
+
+    var applicantDetails = {
+      "full_name": "Waqar Khan",
+      "sex": "Male"// etc.
+    };
 
     IDWise.startJourney(
-      'YOUR-FLOWID-HERE',
-      '<REFERENCE-NUMBER>',
-      'en',
-      journeyCallback,
+      "FLOW_ID",
+      'YOUR_REFERENCE_NO',
+      'LOCALE',
+      applicantDetails,
+      journeyCallbacks,
     );
   };
 
