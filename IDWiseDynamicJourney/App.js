@@ -7,15 +7,15 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native';
-import { Button } from 'react-native-paper';
+import {IDWiseTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
+import React, {useEffect, useState} from 'react';
+import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {Button} from 'react-native-paper';
 
-import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
-import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import {IDWiseDynamic} from 'idwise-react-native-sdk/src/IDWiseDynamic';
 import uuid from 'react-native-uuid';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { AsyncStorageKeys } from './constants';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {AsyncStorageKeys} from './constants';
 
 const App = () => {
   const isDarkMode = false;
@@ -36,66 +36,81 @@ const App = () => {
     AsyncStorage.clear();
     setJourneyId(null);
     setStepButtonEnable(false);
-    IDWise.unloadSDK();
+    IDWiseDynamic.unloadSDK();
     startResumeJourney();
   };
 
   const initializeCallback = {
-    onError(data) {
-      console.log('Event onInitalizeError:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onInitalizeError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const journeySummaryCallback = {
-    onJourneySummary(data) {
-      console.log('Event onJourneySummary received:', data);
-      finishDynamicJourney();
+    onJourneySummary(summary) {
+      console.log('Event onJourneySummary received:', summary);
     },
-    onError(data) {
-      console.log('Event onJourneySummaryError:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onJourneySummaryError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const journeyCallback = {
-    onJourneyStarted(data) {
-      console.log(`Journey Started with id ${data.journeyId}`);
+    onJourneyStarted(journeyStartedInfo) {
+      console.log(`Journey Started with id ${journeyStartedInfo.journeyId}`);
       setStepButtonEnable(true);
       //Save Reference No using AsyncStorage
-      setJourneyId(data.journeyId);
-      AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, data.journeyId);
+      setJourneyId(journeyStartedInfo.journeyId);
+      AsyncStorage.setItem(
+        AsyncStorageKeys.JOURNEY_ID,
+        journeyStartedInfo.journeyId,
+      );
 
-      IDWise.getJourneySummary(journeySummaryCallback);
+      IDWiseDynamic.getJourneySummary(journeySummaryCallback);
     },
-    onJourneyResumed(data) {
-      setJourneyId(data.journeyId);
-      console.log(`Journey Resumed with id ${data.journeyId}`);
+    onJourneyResumed(journeyResumedInfo) {
+      setJourneyId(journeyResumedInfo.journeyId);
+      console.log(`Journey Resumed with id ${journeyResumedInfo.journeyId}`);
       setStepButtonEnable(true);
-      IDWise.getJourneySummary(journeySummaryCallback);
+      IDWiseDynamic.getJourneySummary(journeySummaryCallback);
     },
-    onJourneyFinished(data) {
-      console.log(`Journey Fininshed with id ${data.journeyId}`);
+    onJourneyCompleted(journeyCompletedInfo) {
+      console.log(
+        `Journey Fininshed with id ${journeyCompletedInfo.journeyId}`,
+      );
     },
-    onJourneyCancelled(data) {
-      console.log(`Journey Cancelled with id ${data.journeyId}`);
+    onJourneyCancelled(journeyCancelledInfo) {
+      console.log(
+        `Journey Cancelled with id ${journeyCancelledInfo.journeyId}`,
+      );
     },
-    onError(data) {
-      console.log('Event onJourneyError received:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onJourneyError received:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const stepCallback = {
-    onStepCaptured(stepId, capturedImageB64) {
-      console.log('Event onStepCaptured stepId:', stepId);
+    onStepCaptured(stepCapturedInfo) {
+      console.log('Event onStepCaptured stepId:', stepCapturedInfo.stepId);
     },
-    onStepResult(stepId, stepResult) {
-      console.log('Event onStepResult stepId:', stepId);
-      console.log('Event onStepResult stepResult:', stepResult);
+    onStepResult(stepResultInfo) {
+      console.log('Event onStepResult stepId:', stepResultInfo.stepId);
+      console.log('Event onStepResult stepResult:', stepResultInfo.stepResult);
     },
-    onStepCancelled(stepId) {
-      console.log('Event onStepCancelled stepId:', stepId);
-    },
-    onStepSkipped(stepId) {
-      console.log('Event onStepSkipped stepId:', stepId);
+    onStepCancelled(stepCancelledInfo) {
+      console.log('Event onStepCancelled stepId:', stepCancelledInfo.stepId);
     },
   };
 
@@ -104,34 +119,37 @@ const App = () => {
   }, []);
 
   const finishDynamicJourney = () => {
-    IDWise.finishDynamicJourney();
-  }
+    IDWiseDynamic.finishJourney();
+  };
 
   const startResumeJourney = () => {
-    const clientKey = '<CLIENT_KEY>'; // Provided by IDWise
-    const theme = IDWiseSDKTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
+    const clientKey =
+      'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0='; // Provided by IDWise
+    const theme = IDWiseTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const journeyDefinitionId = '<JOURNEY_DEF_ID>'; // as known as FLOW ID, provided by IDWise
+    const flowId = 'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23'; // as known as journey definition id, provided by IDWise
     var referenceNo = '<REFERENCE_NO>';
     const locale = 'en';
 
-    IDWise.initialize(clientKey, theme, initializeCallback);
+    IDWiseDynamic.initialize(clientKey, theme, initializeCallback);
 
     AsyncStorage.getItem(AsyncStorageKeys.JOURNEY_ID).then(journeyId => {
       if (journeyId == null) {
         referenceNo = 'idwise_test_' + uuid.v4();
-        IDWise.startDynamicJourney(
-          journeyDefinitionId,
+        IDWiseDynamic.startJourney(
+          flowId,
           referenceNo,
           locale,
+          null,
           journeyCallback,
           stepCallback,
         );
       } else {
-        IDWise.resumeDynamicJourney(
-          journeyDefinitionId,
+        IDWiseDynamic.resumeJourney(
+          flowId,
           journeyId,
           locale,
+          null,
           journeyCallback,
           stepCallback,
         );
@@ -141,7 +159,7 @@ const App = () => {
 
   const navigateStep = stepId => {
     console.log(stepId, 'STEP_ID');
-    IDWise.startStep(stepId);
+    IDWiseDynamic.startStep(stepId);
   };
 
   return (

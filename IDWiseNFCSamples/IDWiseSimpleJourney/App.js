@@ -6,8 +6,9 @@
  * @flow strict-local
  */
 
-import { IDWise } from 'idwise-nfc-react-native-sdk/src/IDWise';
-import { IDWiseTheme } from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
+import {IDWise} from 'idwise-nfc-react-native-sdk/src/IDWise';
+import {IDWiseTheme} from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
+
 import React from 'react';
 import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
@@ -33,6 +34,7 @@ const App = () => {
     onJourneyResumed(journeyResumedInfo) {
       console.log('onJourneyResumed:', journeyResumedInfo);
     },
+
     onJourneyCompleted(journeyCompletedInfo) {
       console.log('onJourneyCompleted:', journeyCompletedInfo);
     },
@@ -46,6 +48,7 @@ const App = () => {
 
   const onPress = () => {
     const theme = IDWiseTheme.SYSTEM_DEFAULT;
+
     IDWise.initialize(
       "YOUR_CLIENT_KEY",
       theme,

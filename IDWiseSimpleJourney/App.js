@@ -6,12 +6,13 @@
  * @flow strict-local
  */
 
-import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
-import { IDWiseSDKTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import ApplicantDetailsKeys from 'idwise-react-native-sdk/src/ApplicantDetailsKeys';
+import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
+import {IDWiseTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
 import React from 'react';
-import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
 
 const App = () => {
   const isDarkMode = false;
@@ -21,38 +22,51 @@ const App = () => {
   };
 
   const initializeCallback = {
-    onError(data) {
-      console.log('Event onInitalizeError:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onInitalizeError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
-  const journeyCallback = {
-    onJourneyStarted(data) {
-      console.log('Event onJourneyStarted received:', data);
+  const journeyCallbacks = {
+    onJourneyStarted(journeyStartedInfo) {
+      console.log('Event onJourneyStarted received:', journeyStartedInfo);
     },
-    onJourneyResumed(data) {
-      console.log('Event onJourneyResumed received:', data);
+    onJourneyResumed(journeyResumedInfo) {
+      console.log('Event onJourneyResumed received:', journeyResumedInfo);
     },
-    onJourneyFinished(data) {
-      console.log('Event onJourneyFinished received:', data);
+    onJourneyCompleted(journeyCompletedInfo) {
+      console.log('Event onJourneyCompleted received:', journeyCompletedInfo);
     },
-    onJourneyCancelled(data) {
-      console.log('Event onJourneyCancelled received:', data);
+    onJourneyCancelled(journeyCancelledInfo) {
+      console.log('Event onJourneyCancelled received:', journeyCancelledInfo);
     },
-    onError(data) {
-      console.log('Event onError received:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onError received:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const onPress = () => {
-    const theme = IDWiseSDKTheme.SYSTEM_DEFAULT;
-    IDWise.initialize('<YOUR_CLIENT_KEY>', theme, initializeCallback);
+    const theme = IDWiseTheme.SYSTEM_DEFAULT;
+    IDWise.initialize('YOUR-CLIENT-KEY-HERE', theme, initializeCallback);
+
+    const applicantDetails = {};
+    applicantDetails[ApplicantDetailsKeys.FULL_NAME] = 'user full name';
+    applicantDetails[ApplicantDetailsKeys.SEX] = 'male';
 
     IDWise.startJourney(
-      '<JOURNEY_DEFINITION_ID>',
+      'YOUR-FLOW-ID',
       '<REFERENCE_NO>',
       '<LOCALE>',
-      journeyCallback,
+      applicantDetails, //optional
+      journeyCallbacks,
     );
   };
 
