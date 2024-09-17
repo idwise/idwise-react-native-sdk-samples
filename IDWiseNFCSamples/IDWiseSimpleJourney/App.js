@@ -7,7 +7,7 @@
  */
 
 import {IDWise} from 'idwise-nfc-react-native-sdk/src/IDWise';
-import {IDWiseSDKTheme} from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
+import {IDWiseTheme} from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
 import React from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
@@ -33,7 +33,7 @@ const App = () => {
     onJourneyResumed(data) {
       console.log('Event onJourneyResumed received:', data);
     },
-    onJourneyFinished(data) {
+    onJourneyCompleted(data) {
       console.log('Event onJourneyFinished received:', data);
     },
     onJourneyCancelled(data) {
@@ -45,16 +45,12 @@ const App = () => {
   };
 
   const onPress = () => {
-    const theme = IDWiseSDKTheme.SYSTEM_DEFAULT;
-    IDWise.initialize(
-      'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0=',
-      theme,
-      initializeCallback,
-    );
+    const theme = IDWiseTheme.SYSTEM_DEFAULT;
+    IDWise.initialize('YOUR-CLIENT-KEY-HERE', theme, initializeCallback);
 
     IDWise.startJourney(
-      'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23-nfc',
-      'idw_test',
+      'YOUR-FLOWID-HERE',
+      '<REFERENCE-NUMBER>',
       'en',
       journeyCallback,
     );
