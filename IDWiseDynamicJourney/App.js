@@ -7,27 +7,21 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {IDWiseTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
 import React, {useEffect, useState} from 'react';
-import {
-  NativeEventEmitter,
-  NativeModules,
-  View,
-  Text,
-  SafeAreaView,
-  Dimensions,
-} from 'react-native';
-import {StyleSheet} from 'react-native';
+import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {Button} from 'react-native-paper';
 
+import {IDWiseDynamic} from 'idwise-react-native-sdk/src/IDWiseDynamic';
+import uuid from 'react-native-uuid';
 import {Colors} from 'react-native/Libraries/NewAppScreen';
 import {AsyncStorageKeys} from './constants';
-import uuid from 'react-native-uuid';
 
 const App = () => {
   const isDarkMode = false;
 
-  const STEP_ID_DOCUMENT = '0';
-  const STEP_SELFIE = '2';
+  const STEP_ID_DOCUMENT = '10';
+  const STEP_SELFIE = '20';
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -38,94 +32,126 @@ const App = () => {
   const [journeyId, setJourneyId] = useState(null);
   const [stepButtonEnable, setStepButtonEnable] = useState(false);
 
-  const {IDWiseModule} = NativeModules;
-
-  useEffect(() => {
-    const eventEmitter = new NativeEventEmitter(IDWiseModule);
-
-    eventEmitter.addListener('onError', event => {
-      console.log(
-        `An Error has occured  ${event.errorCode} : ${event.errorMessage}`,
-      );
-    });
-
-    eventEmitter.addListener('onJourneyStarted', event => {
-      console.log(`Journey Started with id ${event.journeyId}`);
-      setStepButtonEnable(true);
-      //Save Reference No using AsyncStorage
-      setJourneyId(event.journeyId);
-      AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, event.journeyId);
-
-      IDWiseModule.getJourneySummary(event.journeyId);
-    });
-
-    eventEmitter.addListener('onJourneyResumed', event => {
-      setJourneyId(event.journeyId);
-      console.log(`Journey Resumed with id ${event.journeyId}`);
-      setStepButtonEnable(true);
-      IDWiseModule.getJourneySummary(event.journeyId);
-    });
-
-    eventEmitter.addListener('onJourneyFinished', event => {
-      console.log(`Journey Completed with id ${event.journeyId}`);
-    });
-
-    eventEmitter.addListener('onJourneyCancelled', event => {
-      console.log(`Journey Cancelled with id ${event.journeyId}`);
-    });
-
-    eventEmitter.addListener('onJourneySummary', event => {
-      console.log(`Journey Summary for id ${event.journeyId}`);
-      console.log(`Journey Step Summaries ${event.journeyStepSummaries}`);
-      console.log(`Journey Result ${event.journeyResult}`);
-      console.log(`Journey Is Complete ${event.journeyIsComplete}`);
-    });
-
-    eventEmitter.addListener('onStepCaptured', event => {
-      console.log(`Step Captured with id ${event.stepId}`);
-    });
-
-    eventEmitter.addListener('onStepResult', event => {
-      console.log(`Step Result with id ${event.stepId} : ${event.stepResult}`);
-    });    
-  });
-
   const resetJourney = () => {
     AsyncStorage.clear();
     setJourneyId(null);
     setStepButtonEnable(false);
-    IDWiseModule.unloadSDK();
+    IDWiseDynamic.unloadSDK();
     startResumeJourney();
+  };
+
+  const initializeCallback = {
+    onError(idwiseError) {
+      console.log(
+        'Event onInitalizeError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
+    },
+  };
+
+  const journeySummaryCallback = {
+    onJourneySummary(summary) {
+      console.log('Event onJourneySummary received:', summary);
+    },
+    onError(idwiseError) {
+      console.log(
+        'Event onJourneySummaryError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
+    },
+  };
+
+  const journeyCallback = {
+    onJourneyStarted(journeyStartedInfo) {
+      console.log(`Journey Started with id ${journeyStartedInfo.journeyId}`);
+      setStepButtonEnable(true);
+      //Save Reference No using AsyncStorage
+      setJourneyId(journeyStartedInfo.journeyId);
+      AsyncStorage.setItem(
+        AsyncStorageKeys.JOURNEY_ID,
+        journeyStartedInfo.journeyId,
+      );
+
+      IDWiseDynamic.getJourneySummary(journeySummaryCallback);
+    },
+    onJourneyResumed(journeyResumedInfo) {
+      setJourneyId(journeyResumedInfo.journeyId);
+      console.log(`Journey Resumed with id ${journeyResumedInfo.journeyId}`);
+      setStepButtonEnable(true);
+      IDWiseDynamic.getJourneySummary(journeySummaryCallback);
+    },
+    onJourneyCompleted(journeyCompletedInfo) {
+      console.log(
+        `Journey Fininshed with id ${journeyCompletedInfo.journeyId}`,
+      );
+    },
+    onJourneyCancelled(journeyCancelledInfo) {
+      console.log(
+        `Journey Cancelled with id ${journeyCancelledInfo.journeyId}`,
+      );
+    },
+    onError(idwiseError) {
+      console.log(
+        'Event onJourneyError received:',
+        idwiseError.code,
+        idwiseError.message,
+      );
+    },
+  };
+
+  const stepCallback = {
+    onStepCaptured(stepCapturedInfo) {
+      console.log('Event onStepCaptured stepId:', stepCapturedInfo.stepId);
+    },
+    onStepResult(stepResultInfo) {
+      console.log('Event onStepResult stepId:', stepResultInfo.stepId);
+      console.log('Event onStepResult stepResult:', stepResultInfo.stepResult);
+    },
+    onStepCancelled(stepCancelledInfo) {
+      console.log('Event onStepCancelled stepId:', stepCancelledInfo.stepId);
+    },
   };
 
   useEffect(() => {
     startResumeJourney();
   }, []);
 
+  const finishDynamicJourney = () => {
+    IDWiseDynamic.finishJourney();
+  };
+
   const startResumeJourney = () => {
     const clientKey =
-      'QmFzaWMgT1dJNU5HRXhPVFV0WWpRek1pMDBPVFl3TFdFd1lqQXRPR0UwWW1Sa1lUQTJOVEkzT21ZMWIxWk1WM0J0Tm1SYWMxVjBWRGxuV1VKcGVVaFhVVVJoYUUxMVQwVkxialZZZVROaU5EZz0=';
-    const theme = 'SYSTEM_DEFAULT'; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
+      'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0='; // Provided by IDWise
+    const theme = IDWiseTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const journeyDefinitionId = '9b94a195-b432-4960-a0b0-8a4bdda06527';
-    var referenceNo = null;
+    const flowId = 'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23'; // as known as journey definition id, provided by IDWise
+    var referenceNo = '<REFERENCE_NO>';
     const locale = 'en';
 
-    IDWiseModule.initialize(clientKey, theme);
+    IDWiseDynamic.initialize(clientKey, theme, initializeCallback);
 
     AsyncStorage.getItem(AsyncStorageKeys.JOURNEY_ID).then(journeyId => {
       if (journeyId == null) {
         referenceNo = 'idwise_test_' + uuid.v4();
-        IDWiseModule.startDynamicJourney(
-          journeyDefinitionId,
+        IDWiseDynamic.startJourney(
+          flowId,
           referenceNo,
           locale,
+          null,
+          journeyCallback,
+          stepCallback,
         );
       } else {
-        IDWiseModule.resumeDynamicJourney(
-          journeyDefinitionId,
+        IDWiseDynamic.resumeJourney(
+          flowId,
           journeyId,
           locale,
+          null,
+          journeyCallback,
+          stepCallback,
         );
       }
     });
@@ -133,7 +159,7 @@ const App = () => {
 
   const navigateStep = stepId => {
     console.log(stepId, 'STEP_ID');
-    IDWiseModule.startStep(stepId);
+    IDWiseDynamic.startStep(stepId);
   };
 
   return (
@@ -164,7 +190,6 @@ const App = () => {
               onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
               ID Document
             </Button>
-           
           </View>
 
           <View
@@ -185,7 +210,6 @@ const App = () => {
               onPress={() => navigateStep(STEP_SELFIE)}>
               Selfie
             </Button>
-            
           </View>
         </View>
       </View>
