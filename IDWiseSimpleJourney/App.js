@@ -9,7 +9,7 @@
 import ApplicantDetailsKeys from 'idwise-react-native-sdk/src/ApplicantDetailsKeys';
 import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
 import {IDWiseTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
 
 import {Colors} from 'react-native/Libraries/NewAppScreen';
@@ -30,7 +30,10 @@ const App = () => {
       );
     },
   };
-
+  useEffect(() => {
+    const theme = IDWiseTheme.SYSTEM_DEFAULT;
+    IDWise.initialize('CLIENT-KEY', theme, initializeCallback);
+  });
   const journeyCallbacks = {
     onJourneyStarted(journeyStartedInfo) {
       console.log('Event onJourneyStarted received:', journeyStartedInfo);
@@ -44,6 +47,9 @@ const App = () => {
     onJourneyCancelled(journeyCancelledInfo) {
       console.log('Event onJourneyCancelled received:', journeyCancelledInfo);
     },
+    onJourneyBlocked(journeyBlockedInfo) {
+      console.log('Event onJourneyBlocked received:', journeyBlockedInfo);
+    },
     onError(idwiseError) {
       console.log(
         'Event onError received:',
@@ -54,9 +60,6 @@ const App = () => {
   };
 
   const onPress = () => {
-    const theme = IDWiseTheme.SYSTEM_DEFAULT;
-    IDWise.initialize('YOUR-CLIENT-KEY-HERE', theme, initializeCallback);
-
     const applicantDetails = {};
     applicantDetails[ApplicantDetailsKeys.FULL_NAME] = 'user full name';
     applicantDetails[ApplicantDetailsKeys.SEX] = 'male';

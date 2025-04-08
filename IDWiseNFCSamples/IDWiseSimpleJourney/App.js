@@ -41,6 +41,9 @@ const App = () => {
     onJourneyCancelled(journeyCancelledInfo) {
       console.log('onJourneyCancelled:', journeyCancelledInfo);
     },
+    onJourneyBlocked(journeyBlockedInfo) {
+      console.log('onJourneyBlocked:', journeyBlockedInfo);
+    },
     onError(error) {
       console.log('onError:', error);
     },

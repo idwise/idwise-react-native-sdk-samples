@@ -92,6 +92,9 @@ const App = () => {
         `Journey Cancelled with id ${journeyCancelledInfo.journeyId}`,
       );
     },
+    onJourneyBlocked(journeyBlockedInfo) {
+      console.log(`Journey Blocked ${journeyBlockedInfo}`);
+    },
     onError(idwiseError) {
       console.log(
         'Event onJourneyError received:',
@@ -123,11 +126,10 @@ const App = () => {
   };
 
   const startResumeJourney = () => {
-    const clientKey =
-      'QmFzaWMgWkRJME1qVm1ZelV0WlRZeU1TMDBZV0kxTFdGak5EVXRObVZqT1RGaU9XSXpZakl6T21oUFlubE9VRXRpVVRkMWVubHBjbGhUYld4aU1GcDNOMWcyTkVwWWNrTXlOa1Z4U21oWlNsaz0='; // Provided by IDWise
+    const clientKey = 'CLIENT-KEY'; // Provided by IDWise
     const theme = IDWiseTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const flowId = 'd2425fc5-e621-4ab5-ac45-6ec91b9b3b23'; // as known as journey definition id, provided by IDWise
+    const flowId = 'FLOW-ID'; // as known as journey definition id, provided by IDWise
     var referenceNo = '<REFERENCE_NO>';
     const locale = 'en';
 

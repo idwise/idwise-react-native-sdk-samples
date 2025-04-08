@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "1.18.1",
-    "idwise-react-native-sdk": "5.0.1-alpha.1",
+    "idwise-react-native-sdk": "5.4.0",
     "react": "18.2.0",
     "react-native": "0.72.7",
     "react-native-paper": "^5.7.2",

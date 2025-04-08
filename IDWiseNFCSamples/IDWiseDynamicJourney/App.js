@@ -76,6 +76,9 @@ const App = () => {
     onJourneyCancelled(data) {
       console.log(`Journey Cancelled with id ${data.journeyId}`);
     },
+    onJourneyBlocked(data) {
+      console.log(`Journey Blocked with id ${data.journeyId}`);
+    },
     onError(data) {
       console.log('Event onJourneyError received:', data);
     },
