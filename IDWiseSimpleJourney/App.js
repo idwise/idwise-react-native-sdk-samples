@@ -64,6 +64,8 @@ const App = () => {
     applicantDetails[ApplicantDetailsKeys.FULL_NAME] = 'user full name';
     applicantDetails[ApplicantDetailsKeys.SEX] = 'male';
 
+    console.log(typeof applicantDetails);
+
     IDWise.startJourney(
       'YOUR-FLOW-ID',
       '<REFERENCE_NO>',
