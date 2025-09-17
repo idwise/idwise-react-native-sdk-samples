@@ -492,6 +492,7 @@
 				DEVELOPMENT_TEAM = X5337XFGMG;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = SimpleJourneySample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -520,6 +521,7 @@
 				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = X5337XFGMG;
 				INFOPLIST_FILE = SimpleJourneySample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
