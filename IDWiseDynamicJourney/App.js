@@ -7,24 +7,22 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {IDWiseTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
-import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Button} from 'react-native-paper';
+import { IDWiseTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
-import {IDWiseDynamic} from 'idwise-react-native-sdk/src/IDWiseDynamic';
+import { IDWiseDynamic } from 'idwise-react-native-sdk/src/IDWiseDynamic';
 import uuid from 'react-native-uuid';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {AsyncStorageKeys} from './constants';
+import { AsyncStorageKeys } from './constants';
 
 const App = () => {
   const isDarkMode = false;
 
-  const STEP_ID_DOCUMENT = '10';
+  const STEP_ID_DOCUMENT = '30';
   const STEP_SELFIE = '20';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     flex: 1,
     backgroundColor: '#FFFFFF',
   };
@@ -166,20 +164,21 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <View style={{flex: 1, justifyContent: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
         <Text style={styles.body}>Welcome to</Text>
         <Text style={styles.heading}>Verification Journey</Text>
         <Text style={styles.body}>
           Please take some time to verify your identity
         </Text>
 
-        <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <Button
               mode="contained"
               buttonColor="#2A4CD0"
@@ -189,7 +188,8 @@ const App = () => {
                 fontSize: 18,
               }}
               disabled={!stepButtonEnable}
-              onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
+              onPress={() => navigateStep(STEP_ID_DOCUMENT)}
+            >
               ID Document
             </Button>
           </View>
@@ -199,17 +199,19 @@ const App = () => {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <Button
               mode="contained"
               buttonColor="#2A4CD0"
-              style={[styles.stepButtonStyle, {marginTop: 10}]}
+              style={[styles.stepButtonStyle, { marginTop: 10 }]}
               contentStyle={styles.stepContentStyle}
               labelStyle={{
                 fontSize: 18,
               }}
               disabled={!stepButtonEnable}
-              onPress={() => navigateStep(STEP_SELFIE)}>
+              onPress={() => navigateStep(STEP_SELFIE)}
+            >
               Selfie
             </Button>
           </View>
@@ -226,8 +228,9 @@ const App = () => {
             position: 'absolute',
             top: Dimensions.get('window').height * 0.85,
           }}
-          selectable={true}>
-          <Text style={{fontWeight: 'bold'}}>Journey Id: </Text>
+          selectable={true}
+        >
+          <Text style={{ fontWeight: 'bold' }}>Journey Id: </Text>
           {journeyId}
         </Text>
       )}
@@ -237,7 +240,8 @@ const App = () => {
         style={styles.journeyButtonStyle}
         contentStyle={styles.journeyContentStyle}
         labelStyle={styles.journeyLabelStyle}
-        onPress={resetJourney}>
+        onPress={resetJourney}
+      >
         Test New Journey
       </Button>
     </SafeAreaView>
