@@ -7,22 +7,22 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
-import {Dimensions, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {Button} from 'react-native-paper';
+import { IDWiseTheme } from 'idwise-nfc-react-native-sdk/src/IDWiseConstants';
+import React, { useEffect, useState } from 'react';
+import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { Button } from 'react-native-paper';
 
+import { IDWiseDynamic } from 'idwise-nfc-react-native-sdk/src/IDWiseDynamic';
 import uuid from 'react-native-uuid';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {AsyncStorageKeys} from './constants';
+import { AsyncStorageKeys } from './constants';
 
 const App = () => {
   const isDarkMode = false;
 
-  const STEP_ID_DOCUMENT = '10';
+  const STEP_ID_DOCUMENT = '30';
   const STEP_SELFIE = '20';
 
   const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
     flex: 1,
     backgroundColor: '#FFFFFF',
   };
@@ -39,64 +39,79 @@ const App = () => {
   };
 
   const initializeCallback = {
-    onError(data) {
-      console.log('Event onInitalizeError:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onInitalizeError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const journeySummaryCallback = {
-    onJourneySummary(data) {
-      console.log('Event onJourneySummary received:', data);
-      finishDynamicJourney();
+    onJourneySummary(summary) {
+      console.log('Event onJourneySummary received:', summary);
     },
-    onError(data) {
-      console.log('Event onJourneySummaryError:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onJourneySummaryError:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const journeyCallback = {
-    onJourneyStarted(data) {
-      console.log(`Journey Started with id ${data.journeyId}`);
+    onJourneyStarted(journeyStartedInfo) {
+      console.log(`Journey Started with id ${journeyStartedInfo.journeyId}`);
       setStepButtonEnable(true);
       //Save Reference No using AsyncStorage
-      setJourneyId(data.journeyId);
-      AsyncStorage.setItem(AsyncStorageKeys.JOURNEY_ID, data.journeyId);
+      setJourneyId(journeyStartedInfo.journeyId);
+      AsyncStorage.setItem(
+        AsyncStorageKeys.JOURNEY_ID,
+        journeyStartedInfo.journeyId,
+      );
 
       IDWiseDynamic.getJourneySummary(journeySummaryCallback);
     },
-    onJourneyResumed(data) {
-      setJourneyId(data.journeyId);
-      console.log(`Journey Resumed with id ${data.journeyId}`);
+    onJourneyResumed(journeyResumedInfo) {
+      setJourneyId(journeyResumedInfo.journeyId);
+      console.log(`Journey Resumed with id ${journeyResumedInfo.journeyId}`);
       setStepButtonEnable(true);
       IDWiseDynamic.getJourneySummary(journeySummaryCallback);
     },
-    onJourneyCompleted(data) {
-      console.log(`Journey Fininshed with id ${data.journeyId}`);
+    onJourneyCompleted(journeyCompletedInfo) {
+      console.log(
+        `Journey Fininshed with id ${journeyCompletedInfo.journeyId}`,
+      );
     },
-    onJourneyCancelled(data) {
-      console.log(`Journey Cancelled with id ${data.journeyId}`);
+    onJourneyCancelled(journeyCancelledInfo) {
+      console.log(
+        `Journey Cancelled with id ${journeyCancelledInfo.journeyId}`,
+      );
     },
-    onJourneyBlocked(data) {
-      console.log(`Journey Blocked with id ${data.journeyId}`);
+    onJourneyBlocked(journeyBlockedInfo) {
+      console.log(`Journey Blocked ${journeyBlockedInfo}`);
     },
-    onError(data) {
-      console.log('Event onJourneyError received:', data);
+    onError(idwiseError) {
+      console.log(
+        'Event onJourneyError received:',
+        idwiseError.code,
+        idwiseError.message,
+      );
     },
   };
 
   const stepCallback = {
-    onStepCaptured(stepId, capturedImageB64) {
-      console.log('Event onStepCaptured stepId:', stepId);
+    onStepCaptured(stepCapturedInfo) {
+      console.log('Event onStepCaptured stepId:', stepCapturedInfo.stepId);
     },
-    onStepResult(stepId, stepResult) {
-      console.log('Event onStepResult stepId:', stepId);
-      console.log('Event onStepResult stepResult:', stepResult);
+    onStepResult(stepResultInfo) {
+      console.log('Event onStepResult stepId:', stepResultInfo.stepId);
+      console.log('Event onStepResult stepResult:', stepResultInfo.stepResult);
     },
-    onStepCancelled(stepId) {
-      console.log('Event onStepCancelled stepId:', stepId);
-    },
-    onStepSkipped(stepId) {
-      console.log('Event onStepSkipped stepId:', stepId);
+    onStepCancelled(stepCancelledInfo) {
+      console.log('Event onStepCancelled stepId:', stepCancelledInfo.stepId);
     },
   };
 
@@ -109,13 +124,12 @@ const App = () => {
   };
 
   const startResumeJourney = () => {
-    const clientKey = '<CLIENT_KEY>'; // Provided by IDWise
+    const clientKey = 'CLIENT-KEY'; // Provided by IDWise
     const theme = IDWiseTheme.SYSTEM_DEFAULT; // [ LIGHT, DARK, SYSTEM_DEFAULT ]
 
-    const journeyDefinitionId = '<JOURNEY_DEF_ID>'; // as known as FLOW ID, provided by IDWise
+    const flowId = 'FLOW-ID'; // as known as journey definition id, provided by IDWise
     var referenceNo = '<REFERENCE_NO>';
     const locale = 'en';
-    const applicantDetails = null;
 
     IDWiseDynamic.initialize(clientKey, theme, initializeCallback);
 
@@ -123,18 +137,19 @@ const App = () => {
       if (journeyId == null) {
         referenceNo = 'idwise_test_' + uuid.v4();
         IDWiseDynamic.startJourney(
-          journeyDefinitionId,
+          flowId,
           referenceNo,
           locale,
-          applicantDetails,
+          null,
           journeyCallback,
           stepCallback,
         );
       } else {
         IDWiseDynamic.resumeJourney(
-          journeyDefinitionId,
+          flowId,
           journeyId,
           locale,
+          null,
           journeyCallback,
           stepCallback,
         );
@@ -149,20 +164,21 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      <View style={{flex: 1, justifyContent: 'center'}}>
+      <View style={{ flex: 1, justifyContent: 'center' }}>
         <Text style={styles.body}>Welcome to</Text>
         <Text style={styles.heading}>Verification Journey</Text>
         <Text style={styles.body}>
           Please take some time to verify your identity
         </Text>
 
-        <View style={{flex: 1, justifyContent: 'center'}}>
+        <View style={{ flex: 1, justifyContent: 'center' }}>
           <View
             style={{
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <Button
               mode="contained"
               buttonColor="#2A4CD0"
@@ -172,7 +188,8 @@ const App = () => {
                 fontSize: 18,
               }}
               disabled={!stepButtonEnable}
-              onPress={() => navigateStep(STEP_ID_DOCUMENT)}>
+              onPress={() => navigateStep(STEP_ID_DOCUMENT)}
+            >
               ID Document
             </Button>
           </View>
@@ -182,17 +199,19 @@ const App = () => {
               flexDirection: 'row',
               justifyContent: 'center',
               alignItems: 'center',
-            }}>
+            }}
+          >
             <Button
               mode="contained"
               buttonColor="#2A4CD0"
-              style={[styles.stepButtonStyle, {marginTop: 10}]}
+              style={[styles.stepButtonStyle, { marginTop: 10 }]}
               contentStyle={styles.stepContentStyle}
               labelStyle={{
                 fontSize: 18,
               }}
               disabled={!stepButtonEnable}
-              onPress={() => navigateStep(STEP_SELFIE)}>
+              onPress={() => navigateStep(STEP_SELFIE)}
+            >
               Selfie
             </Button>
           </View>
@@ -209,8 +228,9 @@ const App = () => {
             position: 'absolute',
             top: Dimensions.get('window').height * 0.85,
           }}
-          selectable={true}>
-          <Text style={{fontWeight: 'bold'}}>Journey Id: </Text>
+          selectable={true}
+        >
+          <Text style={{ fontWeight: 'bold' }}>Journey Id: </Text>
           {journeyId}
         </Text>
       )}
@@ -220,7 +240,8 @@ const App = () => {
         style={styles.journeyButtonStyle}
         contentStyle={styles.journeyContentStyle}
         labelStyle={styles.journeyLabelStyle}
-        onPress={resetJourney}>
+        onPress={resetJourney}
+      >
         Test New Journey
       </Button>
     </SafeAreaView>
