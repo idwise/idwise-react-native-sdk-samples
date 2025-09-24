@@ -7,19 +7,15 @@
  */
 
 import ApplicantDetailsKeys from 'idwise-react-native-sdk/src/ApplicantDetailsKeys';
-import {IDWise} from 'idwise-react-native-sdk/src/IDWise';
-import {IDWiseTheme} from 'idwise-react-native-sdk/src/IDWiseConstants';
-import React, {useEffect} from 'react';
-import {Button, SafeAreaView, StyleSheet, Text, View} from 'react-native';
-
-import {Colors} from 'react-native/Libraries/NewAppScreen';
+import { IDWise } from 'idwise-react-native-sdk/src/IDWise';
+import { IDWiseTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import React, { useEffect } from 'react';
+import { Button, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 
 const App = () => {
   const isDarkMode = false;
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  const backgroundStyle = {};
 
   const initializeCallback = {
     onError(idwiseError) {
