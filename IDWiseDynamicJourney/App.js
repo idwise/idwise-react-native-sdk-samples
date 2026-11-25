@@ -7,12 +7,11 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { IDWiseTheme } from 'idwise-react-native-sdk/src/IDWiseConstants';
+import { IDWiseDynamic, IDWiseTheme } from 'idwise-react-native-sdk';
 import React, { useEffect, useState } from 'react';
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { Button } from 'react-native-paper';
 
-import { IDWiseDynamic } from 'idwise-react-native-sdk/src/IDWiseDynamic';
 import uuid from 'react-native-uuid';
 import { AsyncStorageKeys } from './constants';
 

@@ -3,23 +3,24 @@ PODS:
   - DoubleConversion (1.1.6)
   - fast_float (8.0.0)
   - FBLazyVector (0.81.4)
-  - FingerprintPro (2.7.0)
+  - FingerprintPro (2.13.0)
   - fmt (11.0.2)
   - glog (0.3.5)
   - hermes-engine (0.81.4):
     - hermes-engine/Pre-built (= 0.81.4)
   - hermes-engine/Pre-built (0.81.4)
-  - IDWise (5.7.2):
-    - FingerprintPro (= 2.7.0)
-    - Shield-Ptr (= 1.5.50)
-  - IdwiseReactNativeSdk (5.7.2):
+  - IDWise (7.0.0):
+    - FingerprintPro (= 2.13.0)
+    - OpenSSL-Universal (= 3.3.1000)
+    - Shield-Ptr (= 1.5.57)
+  - IdwiseReactNativeSdk (7.0.0-alpha.2):
     - boost
     - DoubleConversion
     - fast_float
     - fmt
     - glog
     - hermes-engine
-    - IDWise (= 5.7.2)
+    - IDWise (= 7.0.0)
     - RCT-Folly
     - RCT-Folly/Fabric
     - RCTRequired
@@ -41,6 +42,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - OpenSSL-Universal (3.3.1000)
   - RCT-Folly (2024.11.18.00):
     - boost
     - DoubleConversion
@@ -2375,7 +2377,7 @@ PODS:
     - SocketRocket
   - RNCAsyncStorage (1.18.1):
     - React-Core
-  - Shield-Ptr (1.5.50)
+  - Shield-Ptr (1.5.57)
   - SocketRocket (0.7.1)
   - Yoga (0.0.0)
 
@@ -2462,6 +2464,7 @@ SPEC REPOS:
     - IDWise
   trunk:
     - FingerprintPro
+    - OpenSSL-Universal
     - Shield-Ptr
     - SocketRocket
 
@@ -2621,13 +2624,14 @@ SPEC CHECKSUMS:
   DoubleConversion: cb417026b2400c8f53ae97020b2be961b59470cb
   fast_float: b32c788ed9c6a8c584d114d0047beda9664e7cc6
   FBLazyVector: 941bef1c8eeabd9fe1f501e30a5220beee913886
-  FingerprintPro: 0c7dbd28fc83751ca64b06328e2fb22bbc7ed118
+  FingerprintPro: 2f419138022451a72f783db9c94967f5a68e9977
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 35c763d57c9832d0eef764316ca1c4d043581394
-  IDWise: ac74e2ddc6eecda47dca0ade3f0761983ba315f2
-  IdwiseReactNativeSdk: af61ecbb87667f1abb35e85a5a40217db71e7c2d
-  RCT-Folly: 59ec0ac1f2f39672a0c6e6cecdd39383b764646f
+  IDWise: 954c38357134caccd2b19e552e245c3d02434062
+  IdwiseReactNativeSdk: c7c5f8de7b35a8ef17aaa20812f97089f563710c
+  OpenSSL-Universal: 57f92a826947ee3183556bf5e22d7dff8d55f834
+  RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: c0ed3249a97243002615517dff789bf4666cf585
   RCTRequired: 58719f5124f9267b5f9649c08bf23d9aea845b23
   RCTTypeSafety: 4aefa8328ab1f86da273f08517f1f6b343f6c2cc
@@ -2692,10 +2696,10 @@ SPEC CHECKSUMS:
   ReactCodegen: 1d05923ad119796be9db37830d5e5dc76586aa00
   ReactCommon: 394c6b92765cf6d211c2c3f7f6bc601dffb316a6
   RNCAsyncStorage: 01062b75ce749e3a18091a9ad7749effdf09ea43
-  Shield-Ptr: 14319af04ee63dbad318b3e1714434bba99eed37
+  Shield-Ptr: 0c49d80f465a7d6fd8ecd2930a9eefab3adc2962
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: a3ed390a19db0459bd6839823a6ac6d9c6db198d
 
-PODFILE CHECKSUM: 100cbf9140605acca6c41e4e7423373bd98f9343
+PODFILE CHECKSUM: a2c5d7658133ae8071687460a782e2e2bc823bb4
 
 COCOAPODS: 1.16.2
