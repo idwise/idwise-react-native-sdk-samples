@@ -7,7 +7,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, min_ios_version_supported
+platform :ios, '15.6'
 prepare_react_native_project!
 
 linkage = ENV['USE_FRAMEWORKS']
@@ -33,5 +33,18 @@ target 'IDWiseDynamicJourney' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
+    # Xcode 26.4+ clang rejects fmt 11.0.2's consteval format-string checks
+    # ("Call to consteval function ... is not a constant expression").
+    # Disable consteval in fmt until React Native ships a fixed fmt.
+    fmt_base = File.join(installer.sandbox.root, 'fmt', 'include', 'fmt', 'base.h')
+    if File.exist?(fmt_base)
+      contents = File.read(fmt_base)
+      patched = contents.gsub('#  define FMT_USE_CONSTEVAL 1', '#  define FMT_USE_CONSTEVAL 0')
+      if patched != contents
+        File.chmod(0644, fmt_base)
+        File.write(fmt_base, patched)
+      end
+    end
   end
 end
