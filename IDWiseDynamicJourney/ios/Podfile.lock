@@ -13,7 +13,7 @@ PODS:
     - FingerprintPro (= 2.13.0)
     - OpenSSL-Universal (= 3.3.1000)
     - Shield-Ptr (= 1.5.57)
-  - IdwiseReactNativeSdk (7.0.0-alpha.2):
+  - IdwiseReactNativeSdk (7.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2629,7 +2629,7 @@ SPEC CHECKSUMS:
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 35c763d57c9832d0eef764316ca1c4d043581394
   IDWise: 954c38357134caccd2b19e552e245c3d02434062
-  IdwiseReactNativeSdk: c7c5f8de7b35a8ef17aaa20812f97089f563710c
+  IdwiseReactNativeSdk: fb0b26378846b9d3712a92084f17d0a61986ce41
   OpenSSL-Universal: 57f92a826947ee3183556bf5e22d7dff8d55f834
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: c0ed3249a97243002615517dff789bf4666cf585
