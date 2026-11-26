@@ -8,7 +8,7 @@ PODS:
   - hermes-engine (0.81.4):
     - hermes-engine/Pre-built (= 0.81.4)
   - hermes-engine/Pre-built (0.81.4)
-  - IdwiseReactNativeSdk (7.0.0-alpha.2):
+  - IdwiseReactNativeSdk (7.1.0):
     - boost
     - DoubleConversion
     - fast_float
@@ -2524,7 +2524,7 @@ SPEC CHECKSUMS:
   fmt: a40bb5bd0294ea969aaaba240a927bd33d878cdd
   glog: 5683914934d5b6e4240e497e0f4a3b42d1854183
   hermes-engine: 35c763d57c9832d0eef764316ca1c4d043581394
-  IdwiseReactNativeSdk: bdb714c2f3004dcdd7760687c5edd32b1fc9523f
+  IdwiseReactNativeSdk: fb0d0216170d29c6eb25e2b5a3da24415c3fb601
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: c0ed3249a97243002615517dff789bf4666cf585
   RCTRequired: 58719f5124f9267b5f9649c08bf23d9aea845b23
@@ -2592,6 +2592,6 @@ SPEC CHECKSUMS:
   SocketRocket: d4aabe649be1e368d1318fdf28a022d714d65748
   Yoga: a3ed390a19db0459bd6839823a6ac6d9c6db198d
 
-PODFILE CHECKSUM: 96e8ea38317fc0348c3044020118d8412b4b77b9
+PODFILE CHECKSUM: 10b11765910851d5d1ada9fa0529b2f3c2f71472
 
 COCOAPODS: 1.16.2
